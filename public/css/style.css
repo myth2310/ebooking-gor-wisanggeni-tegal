@@ -1,0 +1,151 @@
+
+* {
+    font-family: "Nunito", sans-serif;
+    font-style: normal;
+}
+
+body{
+    padding-top: 100px;
+}
+
+.heighlight {
+    position: absolute;
+    top: 50%;
+    left: 5%;
+    transform: translateY(-50%);
+    background-color: rgba(200, 200, 200, 0.7);
+    padding: 20px;
+    border-radius: 10px;
+    max-width: 900px;
+}
+
+.form-booking{
+    min-height: 100vh;
+    background: url('../images/bg-booking.svg') no-repeat center center;
+    background-size: 60%; 
+  }
+  .booking-card {
+    background: rgba(255, 255, 255, 0.9);
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.3);
+    width: 100%;
+    max-width: 500px;
+    margin: 100px auto; 
+  }
+  .form-control, .form-select {
+    border-radius: 10px;
+  }
+
+  .account-card{
+    background: #fff;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+  }
+  .account-card h4, .history-card h4 {
+    margin-bottom: 20px;
+    font-weight: bold;
+    color: #dc3545;
+  }
+  .profile-img {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 50%;
+    margin-bottom: 15px;
+    border: 3px solid #dc3545;
+  }
+ 
+  .status-booking {
+    font-size: 0.9rem;
+    padding: 4px 10px;
+    border-radius: 20px;
+  }
+  
+  .booking-card:hover {
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+  }
+  .badge-booked {
+    background-color: #dc3545;
+  }
+  .badge-available {
+    background-color: #28a745;
+  }
+  .badge-dp {
+    background-color: #ffc107;
+  }
+  .badge-lunas {
+    background-color: #198754;
+  }
+
+.form-login{
+  min-height: 100vh;
+  background: url('../images/bg-booking.jpg') no-repeat center center;
+  background-size: 70%;
+}
+.form-register {
+  min-height: 100vh;
+  background: url('../images/bg-booking.jpg') no-repeat center center;
+  background-size: 70%;
+}
+
+.riwayat-card {
+  color: black;
+  padding: 25px;
+  border-radius: 15px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.riwayat-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
+}
+
+.riwayat-card .card-title {
+  font-size: 1.4rem;
+  font-weight: bold;
+  color: black;
+}
+
+.riwayat-card .card-body p {
+  font-size: 1rem;
+  margin: 10px 0;
+}
+
+.riwayat-card .status-booking {
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+.riwayat-card .btn-pay {
+  background-color: #f39c12;
+  border-color: #f39c12;
+  color: black;
+  font-weight: bold;
+  padding: 10px 20px;
+  border-radius: 50px;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.riwayat-card .btn-pay:hover {
+  background-color: #e67e22;
+  transform: scale(1.05);
+}
+
+.card-body .d-flex {
+  font-size: 0.9rem;
+  color: #f1f1f1;
+}
+
+.card-body .badge {
+  font-size: 1rem;
+  padding: 8px 12px;
+  border-radius: 12px;
+}
+
+.card-body .badge.bg-success {
+  background-color: #27ae60;
+}
+
