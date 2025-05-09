@@ -32,20 +32,19 @@
                         <?= isset($errors['image']) ? $errors['image'] : '' ?>
                     </div>
                 </div>
-
                 <div class="form-group mb-3">
-                <label for="jenis_lapangan">Jenis Lapangan</label>
-                <select name="jenis" class="form-control <?= isset($errors['jenis']) ? 'is-invalid' : '' ?>" id="jenis" required>
-                    <option value="">-- Pilih Jenis Lapangan --</option>
-                    <option value="Sepak Bola" <?= old('jenis') == 'Sepak Bola' ? 'selected' : '' ?>>Sepak Bola</option>
-                    <option value="Futsal" <?= old('jenis') == 'Futsal' ? 'selected' : '' ?>>Futsal</option>
-                    <option value="Basket" <?= old('jenis') == 'Basket' ? 'selected' : '' ?>>Basket</option>
-                    <option value="Badminton" <?= old('jenis') == 'Badminton' ? 'selected' : '' ?>>Badminton</option>
-                    <option value="Tenis" <?= old('jenis') == 'Tenis' ? 'selected' : '' ?>>Tenis</option>
-                    <option value="Voli" <?= old('jenis') == 'Voli' ? 'selected' : '' ?>>Voli</option>
-                    <option value="Atletik" <?= old('jenis') == 'Atletik' ? 'selected' : '' ?>>Atletik</option>
-                </select>
+                    <label for="jenis_lapangan">Jenis Lapangan</label>
+                    <select name="jenis" class="form-control <?= isset($errors['jenis']) ? 'is-invalid' : '' ?>" id="jenis" required>
+                        <option value="">-- Pilih Jenis Lapangan --</option>
+                        <?php foreach ($categorys as $category): ?>
+                            <option value="<?= $category['id']; ?>" <?= old('jenis') == $category['nama_kategori'] ? 'selected' : '' ?>>
+                                <?= $category['nama_kategori']; ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                   
                 </div>
+
 
 
                 <div class="form-group mb-3">

@@ -149,3 +149,6 @@ body{
   background-color: #27ae60;
 }
 
+#kategori-scroll::-webkit-scrollbar {
+  display: none;
+}

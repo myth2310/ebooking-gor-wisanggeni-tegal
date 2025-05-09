@@ -3,9 +3,12 @@
 namespace App\Controllers;
 
 use App\Controllers\BaseController;
+use App\Database\Seeds\CategorySeeder;
 use App\Models\BookingModel;
+use App\Models\CategoryModel;
 use App\Models\LapanganModel;
 use CodeIgniter\HTTP\ResponseInterface;
+use Config\Database;
 use Midtrans\Snap;
 use Midtrans\Config;
 
@@ -15,9 +18,45 @@ class HomeController extends BaseController
     {
         helper('text');
         $lapanganModel = new LapanganModel();
+        $category = new CategoryModel();
+
         $lapangans = $lapanganModel->findAll();
-        return view('user/landing-page', ['lapangans' => $lapangans]);
+        $categorys = $category->select('category.*, COUNT(lapangan.id) as total_lapangan')
+            ->join('lapangan', 'lapangan.jenis = category.id', 'left')
+            ->groupBy('category.id')
+            ->findAll();
+
+        return view('user/landing-page', [
+            'lapangans' => $lapangans,
+            'categorys' => $categorys,
+        ]);
     }
+
+    public function show($id_kategori)
+    {
+        helper('text');
+        $db = Database::connect();
+
+        $venues = $db->table('lapangan')
+            ->select('lapangan.*, category.nama_kategori')
+            ->join('category', 'category.id = lapangan.jenis')
+            ->where('lapangan.jenis', $id_kategori)
+            ->get()
+            ->getResultArray();
+
+        $kategori = $db->table('category')
+            ->where('id', $id_kategori)
+            ->get()
+            ->getRowArray();
+
+
+
+        return view('user/detail-kategori-page', [
+            'venues'   => $venues,
+            'kategori' => $kategori
+        ]);
+    }
+
 
     public function booking()
     {
@@ -102,29 +141,27 @@ class HomeController extends BaseController
     {
         $bookingModel = new BookingModel();
         $userId = session('id');
-    
+
         $page = $this->request->getGet('page') ?? 1;
         $perPage = 2;
         $offset = ($page - 1) * $perPage;
-    
+
         $data['bookings'] = $bookingModel
             ->select('booking.*, lapangan.nama_lapangan')
             ->join('lapangan', 'lapangan.id = booking.id_lapangan')
             ->where('booking.id_user', $userId)
             ->orderBy('booking.id', 'DESC')
             ->findAll($perPage, $offset);
-    
+
         $total = $bookingModel
             ->where('booking.id_user', $userId)
             ->countAllResults();
-    
+
         $data['currentPage'] = $page;
         $data['perPage'] = $perPage;
         $data['total'] = $total;
         $data['totalPages'] = ceil($total / $perPage);
-    
+
         return view('user/profil-page', $data);
     }
-    
-    
 }

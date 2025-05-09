@@ -20,7 +20,7 @@ class CreateBooking extends Migration
             'bayar'      => ['type' => 'INT'],
             'total_bayar'      => ['type' => 'INT'],
             'jenis_pembayaran' => ['type' => 'ENUM', 'constraint' => ['dp', 'lunas']],
-            'status_booking' => ['type' => 'ENUM', 'constraint' => ['menunggu', 'dibooking', 'dibatalkan'], 'default' => 'menunggu'],
+            'status_booking' => ['type' => 'ENUM', 'constraint' => ['menunggu', 'dibooking','selesai', 'dibatalkan'], 'default' => 'menunggu'],
             'status_bayar'     => ['type' => 'ENUM', 'constraint' => ['menunggu', 'dibayar', 'selesai'], 'default' => 'menunggu'],
             'created_at'       => ['type' => 'DATETIME', 'null' => true],
         ]);

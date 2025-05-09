@@ -35,11 +35,11 @@
                     <?php if (!empty($lapangans)): ?>
                         <?php foreach ($lapangans as $no => $lapangan): ?>
                             <tr>
-                                <td><?= $no + 1 ?></td> <!-- Menampilkan nomor urut yang benar -->
+                                <td><?= $no + 1 ?></td>
                                 <td><img src="<?= base_url('uploads/lapangan/' . $lapangan['image']) ?>" alt="Image" width="100"></td>
                                 <td><?= $lapangan['nama_lapangan'] ?></td>
-                                <td><?= $lapangan['jenis'] ?></td>
-                                <td>Rp<?= number_format($lapangan['harga_per_jam'], 0, ',', '.') ?></td> <!-- Memperbaiki titik koma yang tidak perlu -->
+                                <td><?= $lapangan['category_name'] ?></td>
+                                <td>Rp<?= number_format($lapangan['harga_per_jam'], 0, ',', '.') ?></td>
                                 <td><?= $lapangan['deskripsi'] ?></td>
                                 <td>
                                     <?php if ($lapangan['status'] == 'aktif'): ?>
@@ -56,11 +56,9 @@
                         <?php endforeach; ?>
                     <?php else: ?>
                         <tr>
-                            <td colspan="8" class="text-center">Tidak ada lapangan tersedia.</td> 
+                            <td colspan="8" class="text-center">Tidak ada lapangan tersedia.</td>
                         </tr>
                     <?php endif; ?>
-
-
                 </tbody>
             </table>
         </div>

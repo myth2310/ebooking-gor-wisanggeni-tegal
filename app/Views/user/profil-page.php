@@ -152,7 +152,7 @@
             const orderId = this.getAttribute('data-order-id');
             const totalAmount = this.getAttribute('data-total');
 
-            fetch('<?= base_url('pembayaran/get_snap_token') ?>', {
+            fetch('<?= base_url('payment/get_snap_token') ?>', {
                     method: 'POST',
                     body: JSON.stringify({
                         order_id: orderId,

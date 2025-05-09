@@ -114,10 +114,10 @@ class BookingController extends BaseController
         session()->setFlashdata([
             'swal_icon'  => 'success',
             'swal_title' => 'Berhasil!',
-            'swal_text'  => 'Booking berhasil disimpan dengan kode: ' . $kodeBooking,
+            'swal_text'  => 'Booking berhasil disimpan dengan kode ' . $kodeBooking,
         ]);
 
-        return redirect()->to('/booking');
+        return redirect()->to('/user/profil');
     }
     public function checkJamTerbooking()
     {

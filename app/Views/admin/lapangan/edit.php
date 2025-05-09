@@ -39,21 +39,21 @@
                 </div>
 
                 <div class="form-group mb-3">
-                    <label for="jenis">Jenis Lapangan</label>
-                    <select name="jenis" class="form-control <?= isset($errors['jenis']) ? 'is-invalid' : '' ?>" id="jenis" required>
-                        <option value="">-- Pilih Jenis Lapangan --</option>
+                    <label for="kategori">Kategori Lapangan</label>
+                    <select name="id" class="form-control <?= isset($errors['id']) ? 'is-invalid' : '' ?>" id="kategori_id" required>
+                        <option value="">-- Pilih Kategori Lapangan --</option>
                         <?php
-                        $jenisList = ['Sepak Bola', 'Futsal', 'Basket', 'Badminton', 'Tenis', 'Voli', 'Atletik'];
-                        foreach ($jenisList as $jenis) {
-                            $selected = old('jenis', $lapangan['jenis']) == $jenis ? 'selected' : '';
-                            echo "<option value=\"$jenis\" $selected>$jenis</option>";
+                        foreach ($categorys as $category) {
+                            $selected = old('id', $lapangan['id']) == $category['id'] ? 'selected' : '';
+                            echo "<option value=\"{$category['id']}\" $selected>{$category['nama_kategory']}</option>";
                         }
                         ?>
                     </select>
-                    <div class="invalid-feedback">
-                        <?= $errors['jenis'] ?? '' ?>
-                    </div>
+                    <?php if (isset($errors['kategori_id'])): ?>
+                        <div class="invalid-feedback"><?= $errors['kategori_id'] ?></div>
+                    <?php endif; ?>
                 </div>
+
 
                 <div class="form-group mb-3">
                     <label for="harga_per_jam">Harga Per Jam</label>

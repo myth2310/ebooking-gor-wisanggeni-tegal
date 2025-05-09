@@ -9,6 +9,47 @@
     </ol>
 
     <div class="row">
+
+        <!-- Card Omset Harian -->
+        <div class="col-xl-4 col-md-6 mb-4">
+            <div class="card bg-info text-white h-100">
+                <div class="card-body d-flex align-items-center justify-content-between">
+                    <div>
+                        <h5 class="card-title">Omset Hari Ini</h5>
+                        <h2>Rp <?= number_format($omsetHarian, 0, ',', '.') ?></h2>
+                    </div>
+                    <i class="fas fa-coins fa-3x"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card Omset Bulan Ini -->
+        <div class="col-xl-4 col-md-6 mb-4">
+            <div class="card bg-secondary text-white h-100">
+                <div class="card-body d-flex align-items-center justify-content-between">
+                    <div>
+                        <h5 class="card-title">Omset Bulan Ini</h5>
+                        <h2>Rp <?= number_format($omsetBulanan, 0, ',', '.') ?></h2>
+                    </div>
+                    <i class="fas fa-calendar-alt fa-3x"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card Omset Tahun Ini -->
+        <div class="col-xl-4 col-md-6 mb-4">
+            <div class="card bg-dark text-white h-100">
+                <div class="card-body d-flex align-items-center justify-content-between">
+                    <div>
+                        <h5 class="card-title">Omset Tahun Ini</h5>
+                        <h2>Rp <?= number_format($omsetTahunan, 0, ',', '.') ?></h2>
+                    </div>
+                    <i class="fas fa-calendar fa-3x"></i>
+                </div>
+            </div>
+        </div>
+
+
         <!-- Card Total Users -->
         <div class="col-xl-3 col-md-6 mb-4">
             <div class="card bg-primary text-white h-100">
@@ -62,16 +103,33 @@
         </div>
     </div>
 
-    <!-- Chart Area -->
-    <div class="card mb-4">
-        <div class="card-header">
-            <i class="fas fa-chart-line me-1"></i>
-            Grafik Kenaikan Jumlah Sewa per Bulan
-        </div>
-        <div class="card-body">
-            <canvas id="sewaChart" width="100%" height="30"></canvas>
+    <div class="row">
+    <!-- Chart per Bulan -->
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header">
+                <i class="fas fa-chart-line me-1"></i>
+                Grafik Kenaikan Jumlah Sewa per Bulan
+            </div>
+            <div class="card-body">
+                <canvas id="sewaChart" width="100%" height="30"></canvas>
+            </div>
         </div>
     </div>
+
+    <!-- Chart per Tahun -->
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header">
+                <i class="fas fa-chart-bar me-1"></i>
+                Grafik Jumlah Sewa per Tahun
+            </div>
+            <div class="card-body">
+                <canvas id="sewaChartTahun" width="100%" height="30"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
 
 </div>
 
@@ -79,6 +137,7 @@
 
 <!-- Script Chart.js -->
 <script>
+    // Chart Per Bulan (sudah ada)
     const ctx = document.getElementById('sewaChart').getContext('2d');
 
     const sewaChart = new Chart(ctx, {
@@ -104,6 +163,30 @@
             }
         }
     });
+
+    // Chart Per Tahun
+    const ctxTahun = document.getElementById('sewaChartTahun').getContext('2d');
+    const sewaChartTahun = new Chart(ctxTahun, {
+        type: 'bar',
+        data: {
+            labels: <?= json_encode($tahun) ?>,
+            datasets: [{
+                label: 'Jumlah Sewa per Tahun',
+                data: <?= json_encode($sewaTahunan) ?>,
+                backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                borderColor: 'rgba(255, 99, 132, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
 </script>
+
 
 <?= $this->endSection() ?>

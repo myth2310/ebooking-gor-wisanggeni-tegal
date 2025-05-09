@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Controllers\BaseController;
 use App\Models\BookingModel;
+use App\Models\TransaksiModel;
 use CodeIgniter\HTTP\ResponseInterface;
 use Midtrans\Snap;
 use Midtrans\Config;
@@ -67,39 +68,52 @@ class MidtransController extends BaseController
     {
         $request = file_get_contents("php://input");
         $response = json_decode($request);
-
+    
         if (!$response) {
             log_message('error', 'Callback gagal: tidak ada data JSON.');
             http_response_code(400);
             return;
         }
-
+    
         $order_id = $response->order_id ?? null;
         $transaction_status = $response->transaction_status ?? null;
         $payment_type = $response->payment_type ?? null;
-
+        $transaction_time = $response->transaction_time ?? null;
+        $gross_amount = $response->gross_amount ?? 0;
+        $transaction_id = $response->transaction_id ?? null;
+    
         if (!$order_id || !$transaction_status) {
             log_message('error', 'Callback gagal: order_id atau transaction_status kosong.');
             http_response_code(400);
             return;
         }
+    
         try {
-            $bookingModel = new \App\Models\BookingModel();
-            $updated = $bookingModel->where('kode_booking', $order_id)
-                ->set(['status_bayar' => $transaction_status])
+            $bookingModel = new BookingModel();
+            $bookingModel->where('kode_booking', $order_id)
+                ->set(['status_bayar' => 'selesai'])
                 ->update();
-
-            if ($updated) {
-                log_message('info', 'Callback sukses untuk order ID: ' . $order_id . ' dengan status: ' . $transaction_status);
-            } else {
-                log_message('error', 'Callback gagal: gagal update status untuk order ID: ' . $order_id);
-            }
+    
+            // Simpan ke tabel transaksi
+            $transactionModel = new TransaksiModel();
+            $transactionModel->save([
+                'order_id' => $order_id,
+                'transaction_status' => $transaction_status,
+                'payment_type' => $payment_type,
+                'transaction_time' => $transaction_time,
+                'gross_amount' => $gross_amount,
+                'transaction_id' => $transaction_id
+            ]);
+    
+            log_message('info', 'Callback sukses dan transaksi disimpan untuk order ID: ' . $order_id);
+    
         } catch (\Exception $e) {
             log_message('error', 'Callback error exception: ' . $e->getMessage());
             http_response_code(500);
             return;
-            
         }
+    
         http_response_code(200);
     }
+    
 }

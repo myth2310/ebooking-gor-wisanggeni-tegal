@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Controllers\BaseController;
 use App\Models\AktivitasModel;
+use App\Models\CategoryModel;
 use App\Models\LapanganModel;
 use CodeIgniter\HTTP\ResponseInterface;
 
@@ -12,14 +13,21 @@ class LapanganController extends BaseController
     public function index()
     {
         $lapanganModel = new LapanganModel();
-        $lapangans = $lapanganModel->findAll();
-
-        return view('admin/lapangan/lapangan-page', ['lapangans' => $lapangans]);
+        $lapangans = $lapanganModel->select('lapangan.*, category.nama_kategori as category_name')
+                               ->join('category', 'category.id = lapangan.jenis', 'inner')
+                               ->findAll();
+        return view('admin/lapangan/lapangan-page', [
+            'lapangans' => $lapangans
+        ]);
     }
 
     public function create()
     {
-        return view('admin/lapangan/create');
+        $category = new CategoryModel();
+        $categorys = $category->findAll();
+        return view('admin/lapangan/create',[
+            'categorys' => $categorys
+        ]);
     }
 
     public function store()
@@ -62,11 +70,17 @@ class LapanganController extends BaseController
         $lapanganModel = new LapanganModel();
         $lapangan = $lapanganModel->find($id);
 
+        $category = new CategoryModel();
+        $categorys = $category->findAll();
+
         if (!$lapangan) {
             return redirect()->to('admin/lapangan')->with('error', 'Data lapangan tidak ditemukan.');
         }
 
-        return view('admin/lapangan/edit', ['lapangan' => $lapangan]);
+        return view('admin/lapangan/edit', [
+            'lapangan' => $lapangan,
+            'categorys' => $categorys
+        ]);
     }
 
     public function update($id)

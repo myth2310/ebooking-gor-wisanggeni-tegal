@@ -11,6 +11,10 @@ $routes->get('jadwal', 'HomeController::jadwal');
 $routes->get('booking', 'HomeController::booking');
 $routes->get('lapangan/detail/(:num)', 'HomeController::detail/$1');
 $routes->get('user/profil', 'HomeController::profil');
+$routes->get('user/profil', 'HomeController::profil');
+$routes->get('sport/(:num)', 'HomeController::show/$1');
+
+
 $routes->post('booking/store', 'BookingController::store');
 $routes->post('booking/filter', 'HomeController::filterJadwal');
 $routes->post('check-jam', 'BookingController::checkJamTerbooking');
@@ -24,8 +28,8 @@ $routes->post('/login', 'AuthController::getLogin');
 $routes->post('/logout', 'AuthController::logout');
 
 $routes->get('/booking/bayar/(:segment)', 'MidtransController::bayar/$1');
-$routes->post('/pembayaran/get_snap_token', 'MidtransController::get_snap_token');
-$routes->post('midtrans/callback', 'MidtransController::callback');
+$routes->post('payment/get_snap_token', 'MidtransController::get_snap_token');
+$routes->post('payment/notification', 'MidtransController::callback');
 
 
 
@@ -34,6 +38,10 @@ $routes->group('admin', ['filter' => 'auth'], function ($routes) {
     $routes->get('dashboard', 'DashboardController::index');
     $routes->get('users', 'UserController::index');
     $routes->get('users/create', 'UserController::create');
+    $routes->post('users/store', 'UserController::store'); 
+    $routes->get('users/edit/(:num)', 'UserController::edit/$1'); 
+    $routes->post('users/update/(:num)', 'UserController::update/$1'); 
+    $routes->get('users/delete/(:num)', 'UserController::delete/$1'); 
 
     $routes->get('lapangan', 'LapanganController::index');
     $routes->get('lapangan/create', 'LapanganController::create');

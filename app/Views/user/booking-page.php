@@ -110,42 +110,6 @@
   // Update biaya awal saat halaman dimuat
   updateBiaya();
 </script>
-<script>
-  document.getElementById('lapangan').addEventListener('change', checkJamAvailability);
-  document.getElementById('tanggal').addEventListener('change', checkJamAvailability);
-
-  function checkJamAvailability() {
-    const lapangan = document.getElementById('lapangan').value;
-    const tanggal = document.getElementById('tanggal').value;
-
-    if (lapangan && tanggal) {
-      fetch("<?= base_url('check-jam') ?>", {
-          method: "POST",
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-          },
-          body: `lapangan=${lapangan}&tanggal=${tanggal}`
-        })
-        .then(response => response.json())
-        .then(bookedJams => {
-          const jamSelect = document.getElementById('jam');
-          const options = jamSelect.options;
-
-          for (let i = 0; i < options.length; i++) {
-            const option = options[i];
-            if (bookedJams.includes(option.value)) {
-              option.disabled = true;
-              option.textContent = option.value + " (Sudah dibooking)";
-            } else {
-              option.disabled = false;
-              option.textContent = option.value;
-            }
-          }
-        })
-        .catch(err => console.error("Gagal cek jam:", err));
-    }
-  }
-</script>
 
 
 <?= $this->endSection() ?>
