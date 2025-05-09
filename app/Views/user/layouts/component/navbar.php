@@ -6,7 +6,7 @@
 
 <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm fixed-top" style="top: 35px;">
     <div class="container">
-        <a class="navbar-brand" style="color: #003b95;" href="/" style="font-weight: 900;">GWT</a>
+        <a class="navbar-brand" style="color: #003b95;" href="/" style="font-weight: 900;">Gor Tegal</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarBooking">
             <span class="navbar-toggler-icon"></span>
         </button>
