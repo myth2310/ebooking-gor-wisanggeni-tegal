@@ -317,7 +317,7 @@
 
 
                 const downloadLink = document.getElementById('downloadTicket');
-                downloadLink.href = "<?= base_url('/download-tiket') ?>/" + kode;
+                downloadLink.href = "<?= base_url('/user/download-tiket') ?>/" + kode;
             });
         });
     });

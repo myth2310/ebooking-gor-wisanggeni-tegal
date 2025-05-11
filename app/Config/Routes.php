@@ -14,14 +14,16 @@ $routes->post('booking/filter', 'HomeController::filterJadwal');
 $routes->post('check-jam', 'BookingController::checkJamTerbooking');
 
 
+$routes->post('user/payment/notification', 'MidtransController::callback');
+
 $routes->group('user', ['filter' => 'auth'], function ($routes) {
     $routes->get('booking', 'HomeController::booking');
     $routes->get('profil', 'HomeController::profil');
     $routes->post('payment/get_snap_token', 'MidtransController::get_snap_token');
-    $routes->post('payment/notification', 'MidtransController::callback');
     $routes->post('booking/store', 'BookingController::store');
     $routes->get('download-tiket/(:segment)', 'BookingController::download_tiket/$1');
 });
+
 
 
 

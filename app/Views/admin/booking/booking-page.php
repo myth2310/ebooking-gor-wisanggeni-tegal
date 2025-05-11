@@ -51,7 +51,7 @@
                     <thead>
                         <tr>
                             <th>No</th>
-                            <th>User</th>
+                            <th>Nama</th>
                             <th>Lapangan</th>
                             <th>Tanggal</th>
                             <th>Jenis Pembayaran</th>
@@ -69,18 +69,19 @@
                                 <td><?= esc($booking['nama_lapangan']) ?></td>
                                 <td><?= date('d-m-Y', strtotime($booking['tanggal_booking'])) ?></td>
                                 <td><?= esc($booking['jenis_pembayaran']) ?></td>
-                                <td>
+                            
+                                <td> 
                                     <?php
-                                    if ($booking['jenis_pembayaran'] == 'dp' && $booking['status_bayar'] == 'dibayar') {
-                                        echo '<span class="badge bg-info text-dark"><i class="fa-solid fa-money-bill-wave me-1"></i>DP Lunas</span>';
-                                    } elseif ($booking['jenis_pembayaran'] == 'dp' && $booking['status_bayar'] == 'selesai') {
-                                        echo '<span class="badge bg-success"><i class="fa-solid fa-circle-check me-1"></i>Pembayaran Lunas</span>';
-                                    } elseif ($booking['jenis_pembayaran'] == 'lunas' && $booking['status_booking'] == 'selesai') {
-                                        echo '<span class="badge bg-success"><i class="fa-solid fa-circle-check me-1"></i>Pembayaran Lunas</span>';
-                                    } else {
-                                        echo '<span class="badge bg-secondary"><i class="fa-solid fa-info-circle me-1"></i>' . ucfirst($booking['status_bayar']) . '</span>';
-                                    }
-                                    ?>
+                                        if ($booking['jenis_pembayaran'] == 'dp' && $booking['status_bayar'] == 'dibayar') {
+                                            echo '<span class="badge bg-info text-dark"><i class="fa-solid fa-money-bill-wave me-1"></i>DP Lunas</span>';
+                                        } elseif ($booking['jenis_pembayaran'] == 'dp' && $booking['status_bayar'] == 'selesai') {
+                                            echo '<span class="badge bg-success"><i class="fa-solid fa-circle-check me-1"></i>Pembayaran Lunas</span>';
+                                        } elseif ($booking['jenis_pembayaran'] == 'lunas' && $booking['status_booking'] == 'selesai') {
+                                            echo '<span class="badge bg-success"><i class="fa-solid fa-circle-check me-1"></i>Pembayaran Lunas</span>';
+                                        } else {
+                                            echo '<span class="badge bg-secondary"><i class="fa-solid fa-info-circle me-1"></i>' . ucfirst($booking['status_bayar']) . '</span>';
+                                        }
+                                        ?>
                                 </td>
 
                                 <td>
@@ -108,8 +109,7 @@
                                         echo '<a href="javascript:void(0);" class="btn btn-success btn-sm me-1" onclick="confirmArrival(' . $booking['id'] . ', \'' . $kodeBooking . '\')">
         <i class="fa-solid fa-check"></i> Konfirmasi Kedatangan
     </a>';
-                                    }
-                                    elseif (
+                                    } elseif (
                                         $booking['jenis_pembayaran'] == 'dp' &&
                                         $booking['status_bayar'] == 'dibayar' &&
                                         $booking['status_booking'] == 'dibooking'
@@ -117,8 +117,7 @@
                                         echo '<a href="javascript:void(0);" class="btn btn-success btn-sm me-1" onclick="confirmArrival(' . $booking['id'] . ', \'' . $kodeBooking . '\')">
         <i class="fa-solid fa-check"></i> Konfirmasi Kedatangan
     </a>';
-                                    }
-                                    elseif (
+                                    } elseif (
                                         $booking['jenis_pembayaran'] == 'dp' &&
                                         $booking['status_bayar'] == 'dibayar' &&
                                         $booking['status_booking'] == 'selesai'
@@ -148,6 +147,7 @@
         </div>
     </div>
 </div>
+
 
 <script>
     function confirmArrival(id, kodeBooking) {

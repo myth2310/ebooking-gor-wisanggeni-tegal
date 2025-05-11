@@ -68,45 +68,53 @@ class MidtransController extends BaseController
     {
         $request = file_get_contents("php://input");
         $response = json_decode($request);
-    
+
         if (!$response) {
             log_message('error', 'Callback gagal: tidak ada data JSON.');
-            http_response_code(400);
-            return;
+            return $this->response->setStatusCode(400);
         }
-    
+
         $order_id = $response->order_id ?? null;
         $transaction_status = $response->transaction_status ?? null;
         $payment_type = $response->payment_type ?? null;
         $transaction_time = $response->transaction_time ?? null;
         $gross_amount = $response->gross_amount ?? 0;
         $transaction_id = $response->transaction_id ?? null;
-    
+
         if (!$order_id || !$transaction_status) {
             log_message('error', 'Callback gagal: order_id atau transaction_status kosong.');
-            http_response_code(400);
-            return;
+            return $this->response->setStatusCode(400);
         }
-    
+
         try {
             $bookingModel = new BookingModel();
             $booking = $bookingModel->where('kode_booking', $order_id)->first();
-    
+
             if (!$booking) {
                 log_message('error', 'Booking tidak ditemukan untuk order_id: ' . $order_id);
-                http_response_code(404);
-                return;
+                return $this->response->setStatusCode(404);
             }
-    
-            $statusBayar = 'selesai';
-            if (strtolower($booking['jenis_pembayaran']) == 'dp') {
-                $statusBayar = 'dibayar';
-                $statusBooking = 'dibooking';
+
+            $statusBayar = $booking['status_bayar'];
+            $statusBooking = $booking['status_booking'];
+
+            if (in_array($transaction_status, ['capture', 'settlement'])) {
+                if (strtolower($booking['jenis_pembayaran']) == 'lunas') {
+                    $statusBayar = 'selesai';
+                    $statusBooking = 'dibooking';
+                } elseif (strtolower($booking['jenis_pembayaran']) == 'dp') {
+                    $statusBayar = 'dibayar';
+                    $statusBooking = 'dibooking';
+                }
+            } elseif (in_array($transaction_status, ['cancel', 'deny', 'expire'])) {
+                $statusBayar = 'gagal';
+                $statusBooking = 'dibatalkan';
             }
+
             $bookingModel->where('kode_booking', $order_id)
                 ->set(['status_bayar' => $statusBayar, 'status_booking' => $statusBooking])
                 ->update();
-    
+
             $transactionModel = new TransaksiModel();
             $transactionModel->save([
                 'order_id' => $order_id,
@@ -116,16 +124,13 @@ class MidtransController extends BaseController
                 'gross_amount' => $gross_amount,
                 'transaction_id' => $transaction_id
             ]);
-    
+
             log_message('info', 'Callback sukses dan transaksi disimpan untuk order ID: ' . $order_id);
         } catch (\Exception $e) {
             log_message('error', 'Callback error exception: ' . $e->getMessage());
-            http_response_code(500);
-            return;
+            return $this->response->setStatusCode(500);
         }
-    
-        http_response_code(200);
-    }
 
-    
+        return $this->response->setStatusCode(200);
+    }
 }
