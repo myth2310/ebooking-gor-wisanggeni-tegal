@@ -128,27 +128,6 @@ class BookingController extends BaseController
         return redirect()->to('/user/profil');
     }
 
-    public function checkJamTerbooking()
-    {
-        $lapanganId = $this->request->getPost('lapangan');
-        $tanggal = $this->request->getPost('tanggal');
-
-        $bookingModel = new BookingModel();
-
-        $bookedJams = $bookingModel
-            ->select('jam_mulai')
-            ->where('id_lapangan', $lapanganId)
-            ->where('tanggal_booking', $tanggal)
-            ->where('status_pembayaran', 'dibayar')
-            ->findAll();
-
-        $bookedJamArray = array_map(function ($row) {
-            return $row['jam_mulai'];
-        }, $bookedJams);
-
-        return $this->response->setJSON($bookedJamArray);
-    }
-
     public function download_tiket($kode)
     {
         $bookingModel = new BookingModel();
@@ -266,4 +245,30 @@ class BookingController extends BaseController
         $writer->save('php://output');
         exit;
     }
+
+    public function cekJamTerbooking()
+{
+    $tanggal = $this->request->getPost('tanggal');
+    $lapanganId = $this->request->getPost('lapangan');
+
+ 
+    $bookings = $this->bookingModel
+        ->where('tanggal_booking', $tanggal)
+        ->where('id_lapangan', $lapanganId)
+        ->findAll();
+
+    $jamTerbooking = [];
+
+    foreach ($bookings as $booking) {
+        $jamMulai = (int) explode('.', $booking['jam_mulai'])[0];
+        $durasi = (int) $booking['durasi'];
+        for ($i = 0; $i < $durasi; $i++) {
+            $jamTerbooking[] = $jamMulai + $i;
+        }
+    }
+
+    return $this->response->setJSON($jamTerbooking);
+}
+
+
 }

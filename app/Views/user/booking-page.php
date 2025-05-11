@@ -10,30 +10,34 @@
         <label for="namaPenyewa" class="form-label">Nama Penyewa</label>
         <input type="text" class="form-control" id="namaPenyewa" name="namaPenyewa" value="<?= session('nama') ?>" readonly>
       </div>
+
       <div class="mb-3">
-        <label for="lapangan" class="form-label">Pilih Lapangan</label>
-        <select class="form-select" id="lapangan" name="lapangan" required>
+        <label for="tanggal">Tanggal Booking:</label>
+        <input type="date" id="tanggal" name="tanggal" min="<?= date('Y-m-d') ?>" class="form-control">
+      </div>
+
+      <div class="mb-3">
+        <label for="lapangan">Pilih Lapangan:</label>
+        <select id="lapangan" name="lapangan" class="form-control">
           <option value="">-- Pilih Lapangan --</option>
-          <?php foreach ($lapangans as $lapangan): ?>
-            <option value="<?= esc($lapangan['id']) ?>" data-harga="<?= esc($lapangan['harga_per_jam']) ?>">
-              <?= esc($lapangan['nama_lapangan']) ?>
+          <?php foreach ($lapangans as $l): ?>
+            <option value="<?= $l['id'] ?>" data-harga="<?= $l['harga_per_jam'] ?>">
+              <?= $l['nama_lapangan'] ?> - Rp<?= number_format($l['harga_per_jam'], 0, ',', '.') ?> /jam
             </option>
           <?php endforeach; ?>
         </select>
       </div>
+
       <div class="mb-3">
-        <label for="tanggal" class="form-label">Tanggal Booking</label>
-        <input type="date" class="form-control" id="tanggal" name="tanggal" required>
-      </div>
-      <div class="mb-3">
-        <label for="jam" class="form-label">Jam Mulai Booking</label>
-        <select class="form-select" id="jam" name="jam" required>
+        <label for="jam">Pilih Jam:</label>
+        <select id="jam" name="jam" class="form-control">
           <option value="">-- Pilih Jam --</option>
-          <?php for ($i = 8; $i <= 24; $i++): ?>
-            <option value="<?= sprintf('%02d.00', $i) ?>"><?= sprintf('%02d.00', $i) ?></option>
+          <?php for ($i = 7; $i <= 24; $i++): ?>
+            <option value="<?= $i ?>"><?= sprintf('%02d.00', $i) ?></option>
           <?php endfor; ?>
         </select>
       </div>
+
       <div class="mb-3">
         <label for="durasi" class="form-label">Durasi Sewa (jam)</label>
         <input type="number" class="form-control" id="durasi" name="durasi" min="1" max="9" placeholder="Misal: 2 jam" required>
@@ -71,41 +75,104 @@
 </div>
 
 <script>
-  let totalHarga = 0;
-  let hargaLapangan = 0;
-
-  document.getElementById('lapangan').addEventListener('change', updateBiaya);
-  document.getElementById('durasi').addEventListener('input', updateBiaya);
-  document.getElementById('pembayaran').addEventListener('change', handlePembayaranChange);
-
-  function updateBiaya() {
-    const lapanganSelect = document.getElementById('lapangan');
+  document.addEventListener('DOMContentLoaded', function() {
+    const tanggalInput = document.getElementById('tanggal');
+    const lapanganInput = document.getElementById('lapangan');
+    const jamSelect = document.getElementById('jam');
     const durasiInput = document.getElementById('durasi');
+    const pembayaranInput = document.getElementById('pembayaran');
     const biayaInput = document.getElementById('bayar');
-    const selectedLapangan = lapanganSelect.options[lapanganSelect.selectedIndex];
-    hargaLapangan = selectedLapangan ? parseInt(selectedLapangan.getAttribute('data-harga')) : 0;
-    const durasi = durasiInput.value;
-
-    if (durasi && hargaLapangan) {
-      totalHarga = hargaLapangan * durasi;
-      biayaInput.value = totalHarga.toLocaleString();
-    }
-  }
-
-  function handlePembayaranChange() {
-    const pembayaran = document.getElementById('pembayaran').value;
     const infoDp = document.getElementById('infoDp');
-    const biayaInput = document.getElementById('bayar');
 
-    if (pembayaran === 'dp') {
-      infoDp.style.display = 'block';
-      biayaInput.value = (totalHarga / 2).toLocaleString();
-    } else {
-      infoDp.style.display = 'none';
-      biayaInput.value = totalHarga.toLocaleString();
+    let totalHarga = 0;
+    let hargaLapangan = 0;
+
+    // Set tanggal hari ini sebagai minimum
+    const today = new Date().toISOString().split('T')[0];
+    tanggalInput.setAttribute('min', today);
+
+    // Fungsi mengecek jam yang sudah terbooking
+    function cekJamTerbooking() {
+      const tanggal = tanggalInput.value;
+      const lapangan = lapanganInput.value;
+
+      if (tanggal && lapangan) {
+        fetch('<?= base_url("user/booking/cekJamTerbooking") ?>', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+              'X-Requested-With': 'XMLHttpRequest',
+            },
+            body: `tanggal=${tanggal}&lapangan=${lapangan}`,
+          })
+          .then(response => response.json())
+          .then(data => {
+            const now = new Date();
+            const selectedDate = new Date(tanggal);
+            const options = jamSelect.options;
+
+            for (let i = 0; i < options.length; i++) {
+              const option = options[i];
+              const jamVal = parseInt(option.value);
+
+              if (isNaN(jamVal)) continue;
+
+              let isBooked = data.includes(jamVal);
+              let isPast = false;
+
+              if (selectedDate.toDateString() === now.toDateString()) {
+                isPast = jamVal <= now.getHours();
+              }
+
+              if (isBooked || isPast) {
+                option.disabled = true;
+                option.textContent = `${jamVal}.00 ${isBooked ? '(Terbooking)' : '(Sudah Lewat)'}`;
+              } else {
+                option.disabled = false;
+                option.textContent = `${jamVal}.00`;
+              }
+            }
+          });
+      }
     }
-  }
-  updateBiaya();
+
+    // Fungsi hitung total harga
+    function updateTotalHarga() {
+      const selectedLapangan = lapanganInput.options[lapanganInput.selectedIndex];
+      hargaLapangan = selectedLapangan ? parseInt(selectedLapangan.getAttribute('data-harga')) : 0;
+      const durasi = parseInt(durasiInput.value);
+      totalHarga = (!isNaN(durasi) && hargaLapangan) ? hargaLapangan * durasi : 0;
+    }
+
+    // Fungsi update nilai bayar
+    function updateBiaya() {
+      updateTotalHarga();
+      const pembayaran = pembayaranInput.value;
+
+      if (pembayaran === 'dp') {
+        infoDp.style.display = 'block';
+        biayaInput.value = (totalHarga / 2).toLocaleString('id-ID');
+      } else if (pembayaran === 'lunas') {
+        infoDp.style.display = 'none';
+        biayaInput.value = totalHarga.toLocaleString('id-ID');
+      } else {
+        biayaInput.value = '';
+        infoDp.style.display = 'none';
+      }
+    }
+
+    // Event listeners
+    tanggalInput.addEventListener('change', cekJamTerbooking);
+    lapanganInput.addEventListener('change', () => {
+      cekJamTerbooking();
+      updateBiaya();
+    });
+    durasiInput.addEventListener('input', updateBiaya);
+    pembayaranInput.addEventListener('change', updateBiaya);
+
+    // Inisialisasi awal
+    updateBiaya();
+  });
 </script>
 
 

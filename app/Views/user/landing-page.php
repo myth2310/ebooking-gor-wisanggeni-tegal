@@ -5,7 +5,7 @@
 <!-- Hero Section -->
 <section id="hero" style="position: relative;">
   <div class="hero-image" style="position: relative;">
-    <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjMDHfiql7mfTZK5h_DvtJds1HHFvl6iutgFJDgbtpIAGNuW-4W2YDqTRtCi_SLTuUjD2j71uvb8TDUu4QNp58A_2rv7SNGnqj2AslMc0eA-ImZg6hjZEq_TIrnlnfYAKMkQknae5zhMpuv/s800/GOR-Gelanggang-Olahraga.jpg"
+    <img src="<?= base_url('images/bg-header.jpeg') ?>"
       alt="GOR Wisanggeni" style="width: 100%; height: 500px; object-fit: cover;">
     <div class="heighlight">
       <h3

@@ -11,20 +11,19 @@ $routes->get('jadwal', 'HomeController::jadwal');
 $routes->get('lapangan/detail/(:num)', 'HomeController::detail/$1');
 $routes->get('sport/(:num)', 'HomeController::show/$1');
 $routes->post('booking/filter', 'HomeController::filterJadwal');
-$routes->post('check-jam', 'BookingController::checkJamTerbooking');
+
 
 
 $routes->post('user/payment/notification', 'MidtransController::callback');
 
 $routes->group('user', ['filter' => 'auth'], function ($routes) {
+    $routes->post('booking/cekJamTerbooking', 'BookingController::cekJamTerbooking');
     $routes->get('booking', 'HomeController::booking');
     $routes->get('profil', 'HomeController::profil');
     $routes->post('payment/get_snap_token', 'MidtransController::get_snap_token');
     $routes->post('booking/store', 'BookingController::store');
     $routes->get('download-tiket/(:segment)', 'BookingController::download_tiket/$1');
 });
-
-
 
 
 # AUTH PAGE
