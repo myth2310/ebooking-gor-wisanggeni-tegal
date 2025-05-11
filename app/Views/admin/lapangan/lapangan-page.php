@@ -31,11 +31,13 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <?php $no = 1; ?>
+
                     <?php if (!empty($lapangans)): ?>
-                        <?php foreach ($lapangans as $no => $lapangan): ?>
+                        <?php $no = 1; ?>
+                        <?php foreach ($lapangans as $lapangan): ?>
                             <tr>
-                                <td><?= $no + 1 ?></td>
+                                <td><?= $no++ ?></td>
+
                                 <td><img src="<?= base_url('uploads/lapangan/' . $lapangan['image']) ?>" alt="Image" width="100"></td>
                                 <td><?= $lapangan['nama_lapangan'] ?></td>
                                 <td><?= $lapangan['category_name'] ?></td>

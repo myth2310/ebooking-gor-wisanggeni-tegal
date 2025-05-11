@@ -45,8 +45,6 @@
                    
                 </div>
 
-
-
                 <div class="form-group mb-3">
                     <label for="harga_per_jam">Harga Per Jam</label>
                     <input type="number" class="form-control <?= isset($errors['harga_per_jam']) ? 'is-invalid' : '' ?>" id="harga_per_jam" name="harga_per_jam" value="<?= old('harga_per_jam') ?>" required>

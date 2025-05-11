@@ -14,8 +14,8 @@ class LapanganController extends BaseController
     {
         $lapanganModel = new LapanganModel();
         $lapangans = $lapanganModel->select('lapangan.*, category.nama_kategori as category_name')
-                               ->join('category', 'category.id = lapangan.jenis', 'inner')
-                               ->findAll();
+            ->join('category', 'category.id = lapangan.jenis', 'inner')
+            ->findAll();
         return view('admin/lapangan/lapangan-page', [
             'lapangans' => $lapangans
         ]);
@@ -25,7 +25,7 @@ class LapanganController extends BaseController
     {
         $category = new CategoryModel();
         $categorys = $category->findAll();
-        return view('admin/lapangan/create',[
+        return view('admin/lapangan/create', [
             'categorys' => $categorys
         ]);
     }
@@ -60,6 +60,12 @@ class LapanganController extends BaseController
             'aktivitas'  => session()->get('nama') . ' menambahkan ' . $data['nama_lapangan'],
             'device'     => $this->request->getUserAgent()->getAgentString(),
             'ip_address' => $this->request->getIPAddress(),
+        ]);
+
+        session()->setFlashdata([
+            'swal_icon'  => 'success',
+            'swal_title' => 'Berhasil!',
+            'swal_text'  => 'Data Lapangan Berhasil ditambahkan ',
         ]);
 
         return redirect()->to(base_url('admin/lapangan'))->with('success', 'Lapangan berhasil ditambahkan.');
@@ -124,6 +130,11 @@ class LapanganController extends BaseController
             'ip_address' => $this->request->getIPAddress(),
         ]);
 
+        session()->setFlashdata([
+            'swal_icon'  => 'success',
+            'swal_title' => 'Berhasil!',
+            'swal_text'  => 'Data Lapangan Berhasil diubah ',
+        ]);
         return redirect()->to(base_url('admin/lapangan'))->with('success', 'Lapangan berhasil diperbarui.');
     }
 
@@ -147,6 +158,12 @@ class LapanganController extends BaseController
             'aktivitas'  => session()->get('nama') . ' Menghapus ' . $lapangan['nama_lapangan'],
             'device'     => $this->request->getUserAgent()->getAgentString(),
             'ip_address' => $this->request->getIPAddress(),
+        ]);
+
+        session()->setFlashdata([
+            'swal_icon'  => 'success',
+            'swal_title' => 'Berhasil!',
+            'swal_text'  => 'Data Lapangan Berhasil dihapus ',
         ]);
 
         return redirect()->to('admin/lapangan')->with('success', 'Lapangan berhasil dihapus.');

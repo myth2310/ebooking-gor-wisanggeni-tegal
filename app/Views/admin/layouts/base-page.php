@@ -12,9 +12,19 @@
     <link href="<?= base_url('css/dashboard.css') ?>" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
 <body class="sb-nav-fixed">
+    <?php if (session()->getFlashdata('swal_icon')) : ?>
+        <script>
+            Swal.fire({
+                icon: '<?= session()->getFlashdata('swal_icon') ?>',
+                title: '<?= session()->getFlashdata('swal_title') ?>',
+                text: '<?= session()->getFlashdata('swal_text') ?>',
+            });
+        </script>
+    <?php endif; ?>
     <?= $this->include('admin/layouts/component/navbar') ?>
     <div id="layoutSidenav">
         <?= $this->include('admin/layouts/component/sidebar') ?>

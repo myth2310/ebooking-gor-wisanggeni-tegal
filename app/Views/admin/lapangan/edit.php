@@ -37,15 +37,15 @@
                         <?= $errors['image'] ?? '' ?>
                     </div>
                 </div>
-
                 <div class="form-group mb-3">
                     <label for="kategori">Kategori Lapangan</label>
-                    <select name="id" class="form-control <?= isset($errors['id']) ? 'is-invalid' : '' ?>" id="kategori_id" required>
-                        <option value="">-- Pilih Kategori Lapangan --</option>
+                    <select name="jenis" class="form-control <?= isset($errors['kategori_id']) ? 'is-invalid' : '' ?>" id="kategori_id" required>
+                        <option selected disabled value="">-- Pilih Kategori Lapangan --</option>
                         <?php
+                        $oldKategori = old('kategori_id');
                         foreach ($categorys as $category) {
-                            $selected = old('id', $lapangan['id']) == $category['id'] ? 'selected' : '';
-                            echo "<option value=\"{$category['id']}\" $selected>{$category['nama_kategory']}</option>";
+                            $selected = $oldKategori == $category['id'] ? 'selected' : '';
+                            echo "<option value=\"{$category['id']}\" $selected>{$category['nama_kategori']}</option>";
                         }
                         ?>
                     </select>
@@ -53,7 +53,6 @@
                         <div class="invalid-feedback"><?= $errors['kategori_id'] ?></div>
                     <?php endif; ?>
                 </div>
-
 
                 <div class="form-group mb-3">
                     <label for="harga_per_jam">Harga Per Jam</label>
