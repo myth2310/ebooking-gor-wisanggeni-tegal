@@ -24,24 +24,25 @@
             </a>
 
             <!-- Filter tanggal -->
-            <form action="<?= base_url('admin/booking/filter') ?>" method="get" class="row mb-4">
+            <form action="<?= base_url('admin/booking/filter') ?>" method="post" class="row mb-4">
                 <div class="col-md-4">
                     <label for="start_date" class="form-label">Tanggal Mulai</label>
                     <input type="date" name="start_date" id="start_date" class="form-control"
-                        value="<?= esc($_GET['start_date'] ?? '') ?>">
+                        value="<?= esc($_GET['start_date'] ?? '') ?>" required>
                 </div>
                 <div class="col-md-4">
                     <label for="end_date" class="form-label">Tanggal Sampai</label>
                     <input type="date" name="end_date" id="end_date" class="form-control"
-                        value="<?= esc($_GET['end_date'] ?? '') ?>">
+                        value="<?= esc($_GET['end_date'] ?? '') ?>" required>
                 </div>
                 <div class="col-md-4 d-flex align-items-end">
                     <button type="submit" class="btn btn-primary me-2">
                         <i class="fas fa-filter"></i> Filter
                     </button>
-                    <a href="<?= base_url('admin/booking/download_excel?' . $_SERVER['QUERY_STRING']) ?>" class="btn btn-success">
+                    <a href="<?= base_url('admin/booking/download_excel' . $_SERVER['QUERY_STRING']) ?>" class="btn btn-success">
                         <i class="fas fa-file-excel"></i> Download Excel
                     </a>
+
                 </div>
             </form>
 
@@ -53,6 +54,7 @@
                             <th>User</th>
                             <th>Lapangan</th>
                             <th>Tanggal</th>
+                            <th>Jenis Pembayaran</th>
                             <th>Status Pembayaran</th>
                             <th>Status Booking</th>
                             <th>Aksi</th>
@@ -66,55 +68,72 @@
                                 <td><?= esc($booking['nama_user']) ?></td>
                                 <td><?= esc($booking['nama_lapangan']) ?></td>
                                 <td><?= date('d-m-Y', strtotime($booking['tanggal_booking'])) ?></td>
+                                <td><?= esc($booking['jenis_pembayaran']) ?></td>
                                 <td>
                                     <?php
                                     if ($booking['jenis_pembayaran'] == 'dp' && $booking['status_bayar'] == 'dibayar') {
-                                        echo '<span class="badge bg-success">DP Lunas</span>';
-                                    } elseif ($booking['jenis_pembayaran'] == 'dp' && $booking['status_bayar'] == 'lunas') {
-                                        echo '<span class="badge bg-success">Lunas</span>';
+                                        echo '<span class="badge bg-info text-dark"><i class="fa-solid fa-money-bill-wave me-1"></i>DP Lunas</span>';
+                                    } elseif ($booking['jenis_pembayaran'] == 'dp' && $booking['status_bayar'] == 'selesai') {
+                                        echo '<span class="badge bg-success"><i class="fa-solid fa-circle-check me-1"></i>Pembayaran Lunas</span>';
                                     } elseif ($booking['jenis_pembayaran'] == 'lunas' && $booking['status_booking'] == 'selesai') {
-                                        echo '<span class="badge bg-success">Lunas</span>';
+                                        echo '<span class="badge bg-success"><i class="fa-solid fa-circle-check me-1"></i>Pembayaran Lunas</span>';
                                     } else {
-                                        echo '<span class="badge bg-secondary">' . ucfirst($booking['status_bayar']) . '</span>';
+                                        echo '<span class="badge bg-secondary"><i class="fa-solid fa-info-circle me-1"></i>' . ucfirst($booking['status_bayar']) . '</span>';
                                     }
                                     ?>
                                 </td>
 
                                 <td>
                                     <?php if ($booking['status_booking'] == 'menunggu'): ?>
-                                        <span class="badge bg-warning text-dark">Menunggu</span>
+                                        <span class="badge bg-warning text-dark"><i class="fa-solid fa-clock me-1"></i>Menunggu</span>
                                     <?php elseif ($booking['status_booking'] == 'dibooking'): ?>
-                                        <span class="badge bg-primary">Terbooking</span>
+                                        <span class="badge bg-primary"><i class="fa-solid fa-calendar-check me-1"></i>Terbooking</span>
                                     <?php elseif ($booking['status_booking'] == 'dibatalkan'): ?>
-                                        <span class="badge bg-danger">Dibatalkan</span>
+                                        <span class="badge bg-danger"><i class="fa-solid fa-ban me-1"></i>Dibatalkan</span>
+                                    <?php elseif ($booking['status_booking'] == 'selesai'): ?>
+                                        <span class="badge bg-success"><i class="fa-solid fa-check-circle me-1"></i>Selesai</span>
                                     <?php else: ?>
-                                        <span class="badge bg-secondary"><?= ucfirst($booking['status_booking']) ?></span>
+                                        <span class="badge bg-secondary"><i class="fa-solid fa-info-circle me-1"></i><?= ucfirst($booking['status_booking']) ?></span>
                                     <?php endif; ?>
                                 </td>
 
                                 <td>
                                     <?php
-                                    if ($booking['jenis_pembayaran'] == 'lunas' && $booking['status_booking'] == 'selesai') {
-                                        echo '<a href="' . base_url('admin/booking/konfirmasi_kedatangan/' . $booking['id']) . '" class="btn btn-success btn-sm me-1">
-                <i class="fa-solid fa-check"></i> Konfirmasi Kedatangan
-              </a>';
+                                    $kodeBooking = $booking['kode_booking'];
+                                    if (
+                                        $booking['jenis_pembayaran'] == 'lunas' &&
+                                        $booking['status_bayar'] == 'selesai' &&
+                                        $booking['status_booking'] == 'dibooking'
+                                    ) {
+                                        echo '<a href="javascript:void(0);" class="btn btn-success btn-sm me-1" onclick="confirmArrival(' . $booking['id'] . ', \'' . $kodeBooking . '\')">
+        <i class="fa-solid fa-check"></i> Konfirmasi Kedatangan
+    </a>';
                                     }
-
-                                    if ($booking['jenis_pembayaran'] == 'dp' && $booking['status_bayar'] == 'dibayar') {
-                                        echo '<a href="' . base_url('admin/booking/konfirmasi_kedatangan/' . $booking['id']) . '" class="btn btn-success btn-sm me-1">
-                <i class="fa-solid fa-check"></i> Konfirmasi Kedatangan
-              </a>';
-                                        echo '<a href="' . base_url('admin/booking/konfirmasi_lunas/' . $booking['id']) . '" class="btn btn-primary btn-sm">
-                <i class="fa-solid fa-dollar-sign"></i> Konfirmasi Pelunasan
-              </a>';
+                                    elseif (
+                                        $booking['jenis_pembayaran'] == 'dp' &&
+                                        $booking['status_bayar'] == 'dibayar' &&
+                                        $booking['status_booking'] == 'dibooking'
+                                    ) {
+                                        echo '<a href="javascript:void(0);" class="btn btn-success btn-sm me-1" onclick="confirmArrival(' . $booking['id'] . ', \'' . $kodeBooking . '\')">
+        <i class="fa-solid fa-check"></i> Konfirmasi Kedatangan
+    </a>';
                                     }
-
-                              
+                                    elseif (
+                                        $booking['jenis_pembayaran'] == 'dp' &&
+                                        $booking['status_bayar'] == 'dibayar' &&
+                                        $booking['status_booking'] == 'selesai'
+                                    ) {
+                                        echo '<a href="javascript:void(0);" class="btn btn-primary btn-sm" onclick="confirmPayment(' . $booking['id'] . ', \'' . $kodeBooking . '\')">
+        <i class="fa-solid fa-dollar-sign"></i> Konfirmasi Pelunasan
+    </a>';
+                                    }
                                     echo '<a href="' . base_url('admin/booking/delete/' . $booking['id']) . '" class="btn btn-danger btn-sm ms-1" onclick="return confirm(\'Yakin mau hapus booking ini?\')">
-            <i class="fa-solid fa-trash"></i>
-          </a>';
+    <i class="fa-solid fa-trash"></i>
+</a>';
                                     ?>
+
                                 </td>
+
 
                             </tr>
                         <?php endforeach; ?>
@@ -129,5 +148,39 @@
         </div>
     </div>
 </div>
+
+<script>
+    function confirmArrival(id, kodeBooking) {
+        Swal.fire({
+            title: 'Apakah Anda yakin?',
+            text: "Konfirmasi kedatangan untuk booking dengan kode " + kodeBooking + " ini!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Konfirmasi',
+            cancelButtonText: 'Batal',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = "<?= base_url('admin/booking/konfirmasi_kedatangan/') ?>" + id;
+            }
+        });
+    }
+
+    function confirmPayment(id, kodeBooking) {
+        Swal.fire({
+            title: 'Apakah Anda yakin?',
+            text: "Konfirmasi pelunasan untuk booking dengan kode " + kodeBooking + " ini!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Konfirmasi',
+            cancelButtonText: 'Batal',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = "<?= base_url('admin/booking/konfirmasi_lunas/') ?>" + id;
+            }
+        });
+    }
+</script>
 
 <?= $this->endSection() ?>

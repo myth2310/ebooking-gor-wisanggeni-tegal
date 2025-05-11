@@ -90,11 +90,23 @@ class MidtransController extends BaseController
     
         try {
             $bookingModel = new BookingModel();
+            $booking = $bookingModel->where('kode_booking', $order_id)->first();
+    
+            if (!$booking) {
+                log_message('error', 'Booking tidak ditemukan untuk order_id: ' . $order_id);
+                http_response_code(404);
+                return;
+            }
+    
+            $statusBayar = 'selesai';
+            if (strtolower($booking['jenis_pembayaran']) == 'dp') {
+                $statusBayar = 'dibayar';
+                $statusBooking = 'dibooking';
+            }
             $bookingModel->where('kode_booking', $order_id)
-                ->set(['status_bayar' => 'selesai'])
+                ->set(['status_bayar' => $statusBayar, 'status_booking' => $statusBooking])
                 ->update();
     
-            // Simpan ke tabel transaksi
             $transactionModel = new TransaksiModel();
             $transactionModel->save([
                 'order_id' => $order_id,
@@ -106,7 +118,6 @@ class MidtransController extends BaseController
             ]);
     
             log_message('info', 'Callback sukses dan transaksi disimpan untuk order ID: ' . $order_id);
-    
         } catch (\Exception $e) {
             log_message('error', 'Callback error exception: ' . $e->getMessage());
             http_response_code(500);
@@ -115,5 +126,6 @@ class MidtransController extends BaseController
     
         http_response_code(200);
     }
+
     
 }

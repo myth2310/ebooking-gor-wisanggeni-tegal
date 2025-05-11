@@ -10,7 +10,7 @@
     <div class="heighlight">
       <h3
         style="color: #003b95; font-size: 32px; font-family: Arial, sans-serif; margin-bottom: 10px; font-weight: 700;">
-        WELCOME E-BOOKING GOR WISANGGENI TEGAL
+        WELCOME e<span style="color: #f48420;" >BOOKING</span> GOR WISANGGENI TEGAL
       </h3>
       <p style="color: #555; font-size: 18px; font-family: Arial, sans-serif; font-weight: 500;">
         Need a pitch to train with your team? Fast order everywhere,

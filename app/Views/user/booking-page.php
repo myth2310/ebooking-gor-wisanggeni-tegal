@@ -5,7 +5,7 @@
 <div class="form-booking">
   <div class="booking-card">
     <h2 class="text-center mb-4 fw-bold" style="color: #003b95;">Form Booking Lapangan</h2>
-    <form id="bookingForm" method="post" action="<?= site_url('booking/store') ?>">
+    <form id="bookingForm" method="post" action="<?= site_url('user/booking/store') ?>">
       <div class="mb-3">
         <label for="namaPenyewa" class="form-label">Nama Penyewa</label>
         <input type="text" class="form-control" id="namaPenyewa" name="namaPenyewa" value="<?= session('nama') ?>" readonly>
@@ -71,10 +71,9 @@
 </div>
 
 <script>
-  let totalHarga = 0; // Menyimpan total harga
-  let hargaLapangan = 0; // Menyimpan harga per jam lapangan yang dipilih
+  let totalHarga = 0;
+  let hargaLapangan = 0;
 
-  // Menambahkan event listener untuk perubahan lapangan dan durasi
   document.getElementById('lapangan').addEventListener('change', updateBiaya);
   document.getElementById('durasi').addEventListener('input', updateBiaya);
   document.getElementById('pembayaran').addEventListener('change', handlePembayaranChange);
@@ -106,8 +105,6 @@
       biayaInput.value = totalHarga.toLocaleString();
     }
   }
-
-  // Update biaya awal saat halaman dimuat
   updateBiaya();
 </script>
 

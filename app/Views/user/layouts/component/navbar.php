@@ -6,7 +6,7 @@
 
 <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm fixed-top" style="top: 35px;">
     <div class="container">
-        <a class="navbar-brand" style="color: #003b95;" href="/" style="font-weight: 900;">Gor Tegal</a>
+        <a class="navbar-brand p-3" style="color: #003b95;" href="/" style="font-weight: 900;"><img src="<?= base_url('images/logo.png') ?>" alt="" style="width: 130px;"></a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarBooking">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -18,12 +18,16 @@
             </ul>
 
             <div class="d-flex align-items-center">
-                <a href="/booking" class="btn me-2 text-white" style="background-color: #003b95;"><i class="fa-solid fa-calendar-days" style="margin-right: 10px;"></i>Pesan Cepat</a>
+                <a href="/user/booking" class="btn me-2 text-white" style="background-color: #f48420;"><i class="fa-solid fa-calendar-days" style="margin-right: 10px;"></i>Pesan Cepat</a>
 
                 <?php if (session()->get('isLoggedIn')): ?>
                     <div class="vr mx-2"></div>
 
-                    <a href="/user/profil" style="text-decoration: none; color: #003b95;">
+                    <?php
+                    $role = session()->get('role');
+                    $profilUrl = ($role === 'admin') ? '/admin/dashboard' : '/user/profil';
+                    ?>
+                    <a href="<?= base_url($profilUrl) ?>" style="text-decoration: none; color: #003b95;">
                         <div class="me-3 d-flex align-items-center">
                             <i class="bi bi-person-circle fs-4 me-1"></i>
                             <span style="margin-left: 5px;" class="fw-bold"><?= session()->get('nama') ?></span>

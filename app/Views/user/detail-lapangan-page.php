@@ -84,7 +84,7 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
                     </div>
                     <div class="modal-body">
-                        <input type="hidden" name="id_lapangan" value="<?= esc($lapangan['id_lapangan']) ?>">
+                        <input type="hidden" name="lapangan" value="<?= esc($lapangan['id']) ?>">
 
                         <div class="mb-3">
                             <label class="form-label">Nama Penyewa</label>
