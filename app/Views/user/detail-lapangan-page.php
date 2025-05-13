@@ -122,7 +122,9 @@
 
                         <div class="mb-3">
                             <label class="form-label">Bayar</label>
-                            <input type="text" class="form-control" id="bayar" name="bayar" readonly>
+
+                            <input type="text" class="form-control" id="bayar_display" readonly>
+                            <input type="hidden" id="bayar" name="bayar">
                         </div>
 
                         <div class="mb-3" id="infoDp" style="display: none;">
@@ -146,82 +148,82 @@
         </div>
     </div>
 <?php endif; ?>
-
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const tanggalInput = document.getElementById('tanggal');
-    const lapanganInput = document.getElementById('lapangan');
-    const jamSelect = document.getElementById('jam');
-    const durasiInput = document.getElementById('durasi');
-    const pembayaranInput = document.getElementById('pembayaran');
-    const biayaInput = document.getElementById('bayar');
-    const infoDp = document.getElementById('infoDp');
+    document.addEventListener('DOMContentLoaded', function() {
+        const tanggalInput = document.getElementById('tanggal');
+        const lapanganInput = document.getElementById('lapangan');
+        const jamSelect = document.getElementById('jam');
+        const durasiInput = document.getElementById('durasi');
+        const pembayaranInput = document.getElementById('pembayaran');
+        const biayaInput = document.getElementById('bayar');
+        const biayaDisplay = document.getElementById('bayar_display');
+        const infoDp = document.getElementById('infoDp');
 
-    let hargaLapangan = parseInt(lapanganInput.getAttribute('data-harga')) || 0;
+        let hargaLapangan = parseInt(lapanganInput.getAttribute('data-harga')) || 0;
 
-    function cekJamTerbooking() {
-      const tanggal = tanggalInput.value;
-      const lapangan = lapanganInput.value;
+        function cekJamTerbooking() {
+            const tanggal = tanggalInput.value;
+            const lapangan = lapanganInput.value;
 
-      if (tanggal && lapangan) {
-        fetch('<?= base_url("user/booking/cekJamTerbooking") ?>', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'X-Requested-With': 'XMLHttpRequest',
-          },
-          body: `tanggal=${tanggal}&lapangan=${lapangan}`,
-        })
-        .then(response => response.json())
-        .then(data => {
-          const now = new Date();
-          const selectedDate = new Date(tanggal);
-          const options = jamSelect.options;
+            if (tanggal && lapangan) {
+                fetch('<?= base_url("user/booking/cekJamTerbooking") ?>', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                            'X-Requested-With': 'XMLHttpRequest',
+                        },
+                        body: `tanggal=${tanggal}&lapangan=${lapangan}`,
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        const now = new Date();
+                        const selectedDate = new Date(tanggal);
+                        const options = jamSelect.options;
 
-          for (let i = 0; i < options.length; i++) {
-            const option = options[i];
-            const jamVal = parseInt(option.value);
-            if (isNaN(jamVal)) continue;
+                        for (let i = 0; i < options.length; i++) {
+                            const option = options[i];
+                            const jamVal = parseInt(option.value);
+                            if (isNaN(jamVal)) continue;
 
-            let isBooked = data.includes(jamVal);
-            let isPast = false;
+                            let isBooked = data.includes(jamVal);
+                            let isPast = false;
 
-            if (selectedDate.toDateString() === now.toDateString()) {
-              isPast = jamVal <= now.getHours();
+                            if (selectedDate.toDateString() === now.toDateString()) {
+                                isPast = jamVal <= now.getHours();
+                            }
+
+                            option.disabled = isBooked || isPast;
+                            option.textContent = `${jamVal}.00 ${isBooked ? '(Terbooking)' : isPast ? '(Sudah Lewat)' : ''}`;
+                        }
+                    });
             }
+        }
 
-            option.disabled = isBooked || isPast;
-            option.textContent = `${jamVal}.00 ${isBooked ? '(Terbooking)' : isPast ? '(Sudah Lewat)' : ''}`;
-          }
-        });
-      }
-    }
+        function updateBiaya() {
+            const durasi = parseInt(durasiInput.value);
+            const pembayaran = pembayaranInput.value;
+            const totalHarga = (!isNaN(durasi) && hargaLapangan) ? hargaLapangan * durasi : 0;
 
-    function updateTotalHarga() {
-      const durasi = parseInt(durasiInput.value);
-      return (!isNaN(durasi) && hargaLapangan) ? hargaLapangan * durasi : 0;
-    }
+            if (pembayaran === 'dp') {
+                infoDp.style.display = 'block';
+                const bayar = totalHarga / 2;
+                biayaDisplay.value = bayar.toLocaleString('id-ID');
+                biayaInput.value = bayar;
+            } else if (pembayaran === 'lunas') {
+                infoDp.style.display = 'none';
+                biayaDisplay.value = totalHarga.toLocaleString('id-ID');
+                biayaInput.value = totalHarga;
+            } else {
+                biayaDisplay.value = '';
+                biayaInput.value = '';
+                infoDp.style.display = 'none';
+            }
+        }
 
-    function updateBiaya() {
-      const totalHarga = updateTotalHarga();
-      const pembayaran = pembayaranInput.value;
-
-      if (pembayaran === 'dp') {
-        infoDp.style.display = 'block';
-        biayaInput.value = (totalHarga / 2).toLocaleString('id-ID');
-      } else if (pembayaran === 'lunas') {
-        infoDp.style.display = 'none';
-        biayaInput.value = totalHarga.toLocaleString('id-ID');
-      } else {
-        biayaInput.value = '';
-        infoDp.style.display = 'none';
-      }
-    }
-
-    tanggalInput.addEventListener('change', cekJamTerbooking);
-    durasiInput.addEventListener('input', updateBiaya);
-    pembayaranInput.addEventListener('change', updateBiaya);
-  });
+        tanggalInput.addEventListener('change', cekJamTerbooking);
+        durasiInput.addEventListener('input', updateBiaya);
+        pembayaranInput.addEventListener('change', updateBiaya);
+    });
 </script>
 
 <?= $this->endSection() ?>

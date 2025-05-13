@@ -59,14 +59,15 @@
             <td><?= esc($row['nama_lapangan']) ?></td>
             <td><?= esc($row['jam_mulai']) ?> - <?= esc($row['jam_selesai']) ?></td>
             <td>
-              <?php if ($row['status_booking'] === 'dibooking') : ?>
+              <?php if (($row['status_booking'] === 'dibooking' && $row['status_bayar'] === 'dibayar') || $row['status_bayar'] === 'selesai') : ?>
                 <span class="badge bg-success">Terbooking</span>
               <?php elseif ($row['status_booking'] === 'dibatalkan') : ?>
                 <span class="badge bg-danger">Dibatalkan</span>
               <?php else : ?>
                 <span class="badge bg-secondary">Menunggu</span>
-              <?php endif ?>
+              <?php endif; ?>
             </td>
+
           </tr>
         <?php endforeach ?>
       <?php else : ?>

@@ -54,6 +54,7 @@ $routes->group('admin', ['filter' => 'auth'], function ($routes) {
 
     $routes->get('booking', 'BookingController::index');
     $routes->get('booking/create', 'BookingController::create');
+    $routes->get('booking/delete/(:num)', 'BookingController::delete/$1');
     $routes->post('booking/filter', 'BookingController::filter');
     $routes->get('booking/konfirmasi_kedatangan/(:num)', 'BookingController::konfirmasi_kedatangan/$1');
     $routes->get('booking/konfirmasi_lunas/(:num)', 'BookingController::konfirmasi_lunas/$1');

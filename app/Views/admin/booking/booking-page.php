@@ -69,19 +69,19 @@
                                 <td><?= esc($booking['nama_lapangan']) ?></td>
                                 <td><?= date('d-m-Y', strtotime($booking['tanggal_booking'])) ?></td>
                                 <td><?= esc($booking['jenis_pembayaran']) ?></td>
-                            
-                                <td> 
+
+                                <td>
                                     <?php
-                                        if ($booking['jenis_pembayaran'] == 'dp' && $booking['status_bayar'] == 'dibayar') {
-                                            echo '<span class="badge bg-info text-dark"><i class="fa-solid fa-money-bill-wave me-1"></i>DP Lunas</span>';
-                                        } elseif ($booking['jenis_pembayaran'] == 'dp' && $booking['status_bayar'] == 'selesai') {
-                                            echo '<span class="badge bg-success"><i class="fa-solid fa-circle-check me-1"></i>Pembayaran Lunas</span>';
-                                        } elseif ($booking['jenis_pembayaran'] == 'lunas' && $booking['status_booking'] == 'selesai') {
-                                            echo '<span class="badge bg-success"><i class="fa-solid fa-circle-check me-1"></i>Pembayaran Lunas</span>';
-                                        } else {
-                                            echo '<span class="badge bg-secondary"><i class="fa-solid fa-info-circle me-1"></i>' . ucfirst($booking['status_bayar']) . '</span>';
-                                        }
-                                        ?>
+                                    if ($booking['jenis_pembayaran'] == 'dp' && $booking['status_bayar'] == 'dibayar') {
+                                        echo '<span class="badge bg-info text-dark"><i class="fa-solid fa-money-bill-wave me-1"></i>DP Lunas</span>';
+                                    } elseif ($booking['jenis_pembayaran'] == 'dp' && $booking['status_bayar'] == 'selesai') {
+                                        echo '<span class="badge bg-success"><i class="fa-solid fa-circle-check me-1"></i>Pembayaran Lunas</span>';
+                                    } elseif ($booking['jenis_pembayaran'] == 'lunas' && $booking['status_booking'] == 'selesai') {
+                                        echo '<span class="badge bg-success"><i class="fa-solid fa-circle-check me-1"></i>Pembayaran Lunas</span>';
+                                    } else {
+                                        echo '<span class="badge bg-secondary"><i class="fa-solid fa-info-circle me-1"></i>' . ucfirst($booking['status_bayar']) . '</span>';
+                                    }
+                                    ?>
                                 </td>
 
                                 <td>
@@ -126,9 +126,9 @@
         <i class="fa-solid fa-dollar-sign"></i> Konfirmasi Pelunasan
     </a>';
                                     }
-                                    echo '<a href="' . base_url('admin/booking/delete/' . $booking['id']) . '" class="btn btn-danger btn-sm ms-1" onclick="return confirm(\'Yakin mau hapus booking ini?\')">
-    <i class="fa-solid fa-trash"></i>
-</a>';
+                                    echo '<a href="javascript:void(0);" class="btn btn-danger btn-sm" onclick="deleteBooking(' . $booking['id'] . ', \'' . $kodeBooking . '\')">
+                                    <i class="fa-solid fa-trash"></i>
+                                </a>';
                                     ?>
 
                                 </td>
@@ -181,6 +181,24 @@
             }
         });
     }
+
+    function deleteBooking(id, kodeBooking) {
+        Swal.fire({
+            title: 'Apakah Anda yakin?',
+            text: "Ingin Menghapus data booking dengan kode " + kodeBooking + " ini!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Konfirmasi',
+            cancelButtonText: 'Batal',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = "<?= base_url('admin/booking/delete/') ?>" + id;
+            }
+        });
+    }
 </script>
+
+
 
 <?= $this->endSection() ?>

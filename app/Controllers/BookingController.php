@@ -5,6 +5,7 @@ namespace App\Controllers;
 use App\Controllers\BaseController;
 use App\Models\BookingModel;
 use App\Models\LapanganModel;
+use App\Models\UserModel;
 use CodeIgniter\HTTP\ResponseInterface;
 use Dompdf\Dompdf;
 
@@ -57,8 +58,20 @@ class BookingController extends BaseController
 
     public function create()
     {
-        return view('admin/booking/create');
+  
+        $lapanganModel = new LapanganModel();
+        $userModel = new UserModel();
+    
+        $lapanganData = $lapanganModel->findAll();
+
+        $userData = $userModel->where('role', 'user')->findAll(); 
+
+        return view('admin/booking/create', [
+            'lapanganData' => $lapanganData,
+            'userData' => $userData
+        ]);
     }
+    
 
     public function store()
     {
@@ -247,28 +260,109 @@ class BookingController extends BaseController
     }
 
     public function cekJamTerbooking()
-{
-    $tanggal = $this->request->getPost('tanggal');
-    $lapanganId = $this->request->getPost('lapangan');
+    {
+        $tanggal = $this->request->getPost('tanggal');
+        $lapanganId = $this->request->getPost('lapangan');
 
- 
-    $bookings = $this->bookingModel
-        ->where('tanggal_booking', $tanggal)
-        ->where('id_lapangan', $lapanganId)
-        ->findAll();
 
-    $jamTerbooking = [];
+        $bookings = $this->bookingModel
+            ->where('tanggal_booking', $tanggal)
+            ->where('id_lapangan', $lapanganId)
+            ->findAll();
 
-    foreach ($bookings as $booking) {
-        $jamMulai = (int) explode('.', $booking['jam_mulai'])[0];
-        $durasi = (int) $booking['durasi'];
-        for ($i = 0; $i < $durasi; $i++) {
-            $jamTerbooking[] = $jamMulai + $i;
+        $jamTerbooking = [];
+
+        foreach ($bookings as $booking) {
+            $jamMulai = (int) explode('.', $booking['jam_mulai'])[0];
+            $durasi = (int) $booking['durasi'];
+            for ($i = 0; $i < $durasi; $i++) {
+                $jamTerbooking[] = $jamMulai + $i;
+            }
         }
+
+        return $this->response->setJSON($jamTerbooking);
     }
 
-    return $this->response->setJSON($jamTerbooking);
-}
+
+    public function storeAdmin()
+    {
+        $bookingModel = new BookingModel();
+        $lapanganModel = new LapanganModel();
+
+        $idUser = $this->request->getPost('id_user');
+        $tanggalBooking = $this->request->getPost('tanggal');
+        $jamMulai = $this->request->getPost('jam');
+        $durasi = $this->request->getPost('durasi');
+        $lapanganId = $this->request->getPost('lapangan');
+        $pembayaran = $this->request->getPost('pembayaran');
+        $bayar = $this->request->getPost('bayar');
+
+        $bayar = str_replace(',', '', $bayar);
+        $bayar = (int)$bayar;
+
+        $lapangan = $lapanganModel->find($lapanganId);
+        $biayaPerJam = $lapangan['harga_per_jam'];
+
+        $jamMulaiArray = explode('.', $jamMulai);
+        $jamMulaiJam = intval($jamMulaiArray[0]);
+        $jamMulaiMenit = isset($jamMulaiArray[1]) ? intval($jamMulaiArray[1]) : 0;
+
+        $jamSelesai = $jamMulaiJam + intval($durasi);
+
+        if ($jamSelesai >= 24) {
+            $jamSelesai -= 24;
+        }
+
+        $jamSelesaiFormatted = str_pad($jamSelesai, 2, '0', STR_PAD_LEFT) . ':' . str_pad($jamMulaiMenit, 2, '0', STR_PAD_LEFT);
+
+        $jamMulaiFormatted = str_pad($jamMulaiJam, 2, '0', STR_PAD_LEFT) . ':' . str_pad($jamMulaiMenit, 2, '0', STR_PAD_LEFT);
+
+        $totalBayar = $biayaPerJam * $durasi;
+
+        $tanggalKode = date('Ymd', strtotime($tanggalBooking));
+        $waktuKode = date('His');
+        $jumlahBookingHariIni = $bookingModel
+            ->where('tanggal_booking', $tanggalBooking)
+            ->countAllResults();
+        $urutan = str_pad($jumlahBookingHariIni + 1, 3, '0', STR_PAD_LEFT);
+        $kodeBooking = 'GWT' . $tanggalKode . $waktuKode . $urutan;
 
 
+        $bookingModel->insert([
+            'id_user'           => $idUser,
+            'kode_booking'      => $kodeBooking,
+            'tanggal_booking'   => $tanggalBooking,
+            'jam_mulai'         => $jamMulaiFormatted,
+            'jam_selesai'       => $jamSelesaiFormatted,
+            'durasi'            => $durasi,
+            'id_lapangan'       => $lapanganId,
+            'jenis_pembayaran'  => $pembayaran,
+            'bayar'             => $bayar,
+            'total_bayar'       => $totalBayar,
+            'created_at'        => date('Y-m-d H:i:s'),
+        ]);
+
+        session()->setFlashdata([
+            'swal_icon'  => 'success',
+            'swal_title' => 'Berhasil!',
+            'swal_text'  => 'Booking berhasil disimpan dengan kode ' . $kodeBooking,
+        ]);
+
+        return redirect()->to('/user/profil');
+    }
+
+    public function delete($id)
+    {
+        $bookingModel = new BookingModel();
+
+        $booking = $bookingModel->find($id);
+        $bookingModel->delete($id);
+        -session()->setFlashdata([
+            'swal_icon'  => 'success',
+            'swal_title' => 'Berhasil!',
+            'swal_text'  => 'Booking dengan kode #' . $booking['kode_booking'] . ' berhasil dihapus.',
+        ]);
+
+        return redirect()->to(base_url('admin/booking'));
+    }
 }
