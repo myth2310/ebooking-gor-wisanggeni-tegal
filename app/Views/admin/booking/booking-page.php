@@ -13,7 +13,7 @@
                 <i class="fas fa-table me-1"></i> Data Booking GOR Wisanggni Tegal
                 <p class="text-success mt-2">
                     Data untuk tanggal:
-                    <strong><?= isset($tanggal) ? date('d-m-Y', strtotime($tanggal)) : date('d-m-Y') ?></strong>
+                    <strong id="tanggal"></strong>
                 </p>
             </div>
         </div>
@@ -199,6 +199,19 @@
     }
 </script>
 
+<script>
+    const tanggalDariServer = "";
+
+    const formatTanggal = (tgl) => {
+        const date = new Date(tgl || Date.now());
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const year = date.getFullYear();
+        return `${day}-${month}-${year}`;
+    };
+
+    document.getElementById("tanggal").textContent = formatTanggal(tanggalDariServer);
+</script>
 
 
 <?= $this->endSection() ?>

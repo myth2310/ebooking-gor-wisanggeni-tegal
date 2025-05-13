@@ -58,20 +58,20 @@ class BookingController extends BaseController
 
     public function create()
     {
-  
+
         $lapanganModel = new LapanganModel();
         $userModel = new UserModel();
-    
-        $lapanganData = $lapanganModel->findAll();
 
-        $userData = $userModel->where('role', 'user')->findAll(); 
+        $lapangans = $lapanganModel->findAll();
+
+        $userData = $userModel->where('role', 'user')->findAll();
 
         return view('admin/booking/create', [
-            'lapanganData' => $lapanganData,
+            'lapangans' => $lapangans,
             'userData' => $userData
         ]);
     }
-    
+
 
     public function store()
     {
@@ -308,16 +308,23 @@ class BookingController extends BaseController
         $jamMulaiMenit = isset($jamMulaiArray[1]) ? intval($jamMulaiArray[1]) : 0;
 
         $jamSelesai = $jamMulaiJam + intval($durasi);
-
         if ($jamSelesai >= 24) {
             $jamSelesai -= 24;
         }
 
         $jamSelesaiFormatted = str_pad($jamSelesai, 2, '0', STR_PAD_LEFT) . ':' . str_pad($jamMulaiMenit, 2, '0', STR_PAD_LEFT);
-
         $jamMulaiFormatted = str_pad($jamMulaiJam, 2, '0', STR_PAD_LEFT) . ':' . str_pad($jamMulaiMenit, 2, '0', STR_PAD_LEFT);
 
         $totalBayar = $biayaPerJam * $durasi;
+
+
+        if ($pembayaran === 'dp') {
+            $statusBayar = 'dibayar';
+        } elseif ($pembayaran === 'lunas') {
+            $statusBayar = 'selesai';
+        } else {
+            $statusBayar = 'manunggu';
+        }
 
         $tanggalKode = date('Ymd', strtotime($tanggalBooking));
         $waktuKode = date('His');
@@ -326,7 +333,6 @@ class BookingController extends BaseController
             ->countAllResults();
         $urutan = str_pad($jumlahBookingHariIni + 1, 3, '0', STR_PAD_LEFT);
         $kodeBooking = 'GWT' . $tanggalKode . $waktuKode . $urutan;
-
 
         $bookingModel->insert([
             'id_user'           => $idUser,
@@ -337,8 +343,10 @@ class BookingController extends BaseController
             'durasi'            => $durasi,
             'id_lapangan'       => $lapanganId,
             'jenis_pembayaran'  => $pembayaran,
+            'status_booking'  => 'dibooking',
             'bayar'             => $bayar,
             'total_bayar'       => $totalBayar,
+            'status_bayar'      => $statusBayar,
             'created_at'        => date('Y-m-d H:i:s'),
         ]);
 
@@ -348,8 +356,9 @@ class BookingController extends BaseController
             'swal_text'  => 'Booking berhasil disimpan dengan kode ' . $kodeBooking,
         ]);
 
-        return redirect()->to('/user/profil');
+        return redirect()->to('/admin/booking');
     }
+
 
     public function delete($id)
     {

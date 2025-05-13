@@ -15,9 +15,9 @@ $routes->post('booking/filter', 'HomeController::filterJadwal');
 
 
 $routes->post('user/payment/notification', 'MidtransController::callback');
+$routes->post('user/booking/cekJamTerbooking', 'BookingController::cekJamTerbooking');
 
 $routes->group('user', ['filter' => 'auth'], function ($routes) {
-    $routes->post('booking/cekJamTerbooking', 'BookingController::cekJamTerbooking');
     $routes->get('booking', 'HomeController::booking');
     $routes->get('profil', 'HomeController::profil');
     $routes->post('payment/get_snap_token', 'MidtransController::get_snap_token');
@@ -59,7 +59,7 @@ $routes->group('admin', ['filter' => 'auth'], function ($routes) {
     $routes->get('booking/konfirmasi_kedatangan/(:num)', 'BookingController::konfirmasi_kedatangan/$1');
     $routes->get('booking/konfirmasi_lunas/(:num)', 'BookingController::konfirmasi_lunas/$1');
     $routes->get('booking/download_excel', 'BookingController::download_excel');
-
+    $routes->post('booking/store', 'BookingController::storeAdmin');
 
     $routes->get('aktivitas', 'AktivitasController::index');
 });
