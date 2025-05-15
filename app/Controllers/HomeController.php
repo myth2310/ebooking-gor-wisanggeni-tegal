@@ -7,6 +7,7 @@ use App\Database\Seeds\CategorySeeder;
 use App\Models\BookingModel;
 use App\Models\CategoryModel;
 use App\Models\LapanganModel;
+use App\Models\UserModel;
 use CodeIgniter\HTTP\ResponseInterface;
 use Config\Database;
 use Midtrans\Snap;
@@ -19,6 +20,8 @@ class HomeController extends BaseController
         helper('text');
         $lapanganModel = new LapanganModel();
         $category = new CategoryModel();
+
+
 
         $lapangans = $lapanganModel->findAll();
         $categorys = $category->select('category.*, COUNT(lapangan.id) as total_lapangan')
@@ -162,6 +165,56 @@ class HomeController extends BaseController
         $data['total'] = $total;
         $data['totalPages'] = ceil($total / $perPage);
 
+        $userModel = new UserModel();
+        $user = $userModel->find($userId);
+
+        $data['user'] = $user;
+
         return view('user/profil-page', $data);
+    }
+
+    public function updateProfil()
+    {
+        $userId = session()->get('id');
+        $userModel = new UserModel();
+        $user = $userModel->find($userId);
+
+        if (!$user) {
+            return redirect()->back()->with('error', 'Data user tidak ditemukan.');
+        }
+
+        $nama    = $this->request->getPost('nama');
+        $email   = $this->request->getPost('email');
+        $no_hp   = $this->request->getPost('no_hp');
+        $alamat  = $this->request->getPost('alamat');
+
+        $data = [
+            'nama'    => $nama,
+            'email'   => $email,
+            'no_hp'   => $no_hp,
+            'alamat'  => $alamat,
+        ];
+
+        $image = $this->request->getFile('image');
+
+        if ($image && $image->isValid() && !$image->hasMoved()) {
+            if (!empty($user['image_profil']) && file_exists('uploads/foto_profil/' . $user['image_profil'])) {
+                unlink('uploads/foto_profil/' . $user['image_profil']);
+            }
+
+            $imageName = $image->getRandomName();
+            $image->move('uploads/foto_profil', $imageName);
+
+            $data['image_profil'] = $imageName;
+        }
+
+        $userModel->update($userId, $data);
+
+        session()->set([
+            'nama'  => $nama,
+            'email' => $email,
+        ]);
+
+        return redirect()->back()->with('success', 'Profil berhasil diperbarui.');
     }
 }

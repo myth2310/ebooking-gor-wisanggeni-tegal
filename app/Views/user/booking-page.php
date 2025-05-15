@@ -53,7 +53,9 @@
       </div>
       <div class="mb-3">
         <label for="bayar" class="form-label">Bayar</label>
-        <input type="text" class="form-control" id="bayar" name="bayar" readonly>
+        <input type="text" class="form-control" id="bayar_display" readonly>
+        <input type="hidden" name="bayar" id="bayar">
+
       </div>
       <div class="mb-3" id="infoDp" style="display: none;">
         <div class="alert alert-info">
@@ -86,12 +88,8 @@
 
     let totalHarga = 0;
     let hargaLapangan = 0;
-
-    // Set tanggal hari ini sebagai minimum
     const today = new Date().toISOString().split('T')[0];
     tanggalInput.setAttribute('min', today);
-
-    // Fungsi mengecek jam yang sudah terbooking
     function cekJamTerbooking() {
       const tanggal = tanggalInput.value;
       const lapangan = lapanganInput.value;
@@ -136,7 +134,6 @@
       }
     }
 
-    // Fungsi hitung total harga
     function updateTotalHarga() {
       const selectedLapangan = lapanganInput.options[lapanganInput.selectedIndex];
       hargaLapangan = selectedLapangan ? parseInt(selectedLapangan.getAttribute('data-harga')) : 0;
@@ -144,24 +141,26 @@
       totalHarga = (!isNaN(durasi) && hargaLapangan) ? hargaLapangan * durasi : 0;
     }
 
-    // Fungsi update nilai bayar
     function updateBiaya() {
       updateTotalHarga();
       const pembayaran = pembayaranInput.value;
 
+      let bayarVal = 0;
       if (pembayaran === 'dp') {
         infoDp.style.display = 'block';
-        biayaInput.value = (totalHarga / 2).toLocaleString('id-ID');
+        bayarVal = Math.floor(totalHarga / 2);
       } else if (pembayaran === 'lunas') {
         infoDp.style.display = 'none';
-        biayaInput.value = totalHarga.toLocaleString('id-ID');
+        bayarVal = totalHarga;
       } else {
-        biayaInput.value = '';
         infoDp.style.display = 'none';
+        bayarVal = 0;
       }
+
+      document.getElementById('bayar_display').value = bayarVal.toLocaleString('id-ID');
+      document.getElementById('bayar').value = bayarVal;
     }
 
-    // Event listeners
     tanggalInput.addEventListener('change', cekJamTerbooking);
     lapanganInput.addEventListener('change', () => {
       cekJamTerbooking();
@@ -169,8 +168,6 @@
     });
     durasiInput.addEventListener('input', updateBiaya);
     pembayaranInput.addEventListener('change', updateBiaya);
-
-    // Inisialisasi awal
     updateBiaya();
   });
 </script>

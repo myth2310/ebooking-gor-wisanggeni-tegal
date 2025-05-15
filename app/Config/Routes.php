@@ -20,6 +20,7 @@ $routes->post('user/booking/cekJamTerbooking', 'BookingController::cekJamTerbook
 $routes->group('user', ['filter' => 'auth'], function ($routes) {
     $routes->get('booking', 'HomeController::booking');
     $routes->get('profil', 'HomeController::profil');
+    $routes->post('profil/update', 'HomeController::updateProfil');
     $routes->post('payment/get_snap_token', 'MidtransController::get_snap_token');
     $routes->post('booking/store', 'BookingController::store');
     $routes->get('download-tiket/(:segment)', 'BookingController::download_tiket/$1');

@@ -50,13 +50,14 @@
                                         <td><?= date('d M Y', strtotime($item['tanggal_booking'])) ?></td>
                                         <td><?= esc($item['jam_mulai']) ?> - <?= esc($item['jam_selesai']) ?></td>
                                         <td>
-                                            <?php if ($item['status_booking'] === 'dibooking') : ?>
+                                            <?php if (($item['status_booking'] === 'dibooking' && $item['status_bayar'] === 'dibayar') || $item['status_booking'] === 'lunas') : ?>
                                                 <span class="badge bg-success">Terbooking</span>
                                             <?php elseif ($item['status_booking'] === 'dibatalkan') : ?>
                                                 <span class="badge bg-danger">Dibatalkan</span>
                                             <?php else : ?>
                                                 <span class="badge bg-secondary">Menunggu</span>
-                                            <?php endif ?>
+                                            <?php endif; ?>
+
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>

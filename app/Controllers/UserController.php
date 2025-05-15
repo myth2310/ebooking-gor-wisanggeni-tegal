@@ -26,22 +26,33 @@ class UserController extends BaseController
         $data = $this->request->getPost();
         $userModel = new UserModel();
 
+        $emailExists = $userModel->where('email', $data['email'])->first();
+        if ($emailExists) {
+            return redirect()->back()->withInput()->with('error', 'Email sudah terdaftar.');
+        }
+
+        $phoneExists = $userModel->where('no_hp', $data['no_hp'])->first();
+        if ($phoneExists) {
+            return redirect()->back()->withInput()->with('error', 'Nomor telepon sudah terdaftar.');
+        }
+
         $userModel->save([
-            'nama'    => $data['nama'],
-            'email'   => $data['email'],
-            'no_hp'   => $data['no_hp'],
+            'nama'     => $data['nama'],
+            'email'    => $data['email'],
+            'no_hp'    => $data['no_hp'],
             'password' => password_hash($data['password'], PASSWORD_DEFAULT),
-            'role'    => $data['role'],
-            'alamat'  => $data['alamat'],
+            'role'     => $data['role'],
+            'alamat'   => $data['alamat'],
         ]);
 
         session()->setFlashdata([
             'swal_icon'  => 'success',
             'swal_title' => 'Berhasil!',
-            'swal_text'  => 'User Berhasil ditambahkan ',
+            'swal_text'  => 'User berhasil ditambahkan.',
         ]);
-        return redirect()->to(base_url('admin/users'))->with('success', 'User berhasil ditambahkan.');
+        return redirect()->to(base_url('admin/users'));
     }
+
 
     public function edit($id)
     {
@@ -90,7 +101,7 @@ class UserController extends BaseController
         $userModel->delete($id);
         $aktivitasModel = new AktivitasModel();
         $aktivitasModel->insert([
-            'aktivitas'  => session()->get('nama') . ' Menghapus user ' . $user['name'],
+            'aktivitas'  => session()->get('nama') . ' Menghapus user ' . $user['nama'],
             'device'     => $this->request->getUserAgent()->getAgentString(),
             'ip_address' => $this->request->getIPAddress(),
         ]);

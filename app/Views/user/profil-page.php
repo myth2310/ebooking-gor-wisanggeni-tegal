@@ -10,19 +10,35 @@
 <!-- Main Content -->
 <div class="container" style="margin-top: 40px;">
     <div class="row">
-
-        <!-- Informasi Akun -->
         <div class="col-md-4">
-            <div class="account-card text-center">
-                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSOH2aZnIHWjMQj2lQUOWIL2f4Hljgab0ecZQ&s" alt="Foto Profil" class="profile-img">
-                <h4><?= session('nama') ?></h4>
-                <p><strong>Email:</strong> <?= session('email') ?></p>
-                <p><strong>Telepon:</strong> 08123456789</p>
-                <p><strong>Alamat:</strong> Jakarta, Indonesia</p>
+            <div class="account-card text-center p-4 shadow-sm rounded bg-white">
+                <?php
+                $image = !empty($user['image_profil']) && file_exists(FCPATH . 'uploads/foto_profil/' . $user['image_profil'])
+                    ? base_url('uploads/foto_profil/' . $user['image_profil'])
+                    : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSOH2aZnIHWjMQj2lQUOWIL2f4Hljgab0ecZQ&s';
+                ?>
+
+                <div class="text-start px-3">
+                    <img src="<?= $image ?>" alt="Foto Profil" class="profile-img rounded-circle mb-3" style="width: 140px; height: 140px; object-fit: cover; border: 3px solid #007bff;">
+                </div>
+                <h4 class="fw-bold mb-3 text-start px-3"><?= esc($user['nama']) ?></h4>
+
+                <div class="text-start px-3">
+                    <p class="mb-2"><i class="fa fa-envelope me-2 text-primary"></i><strong>Email:</strong> <?= esc($user['email']) ?></p>
+                    <p class="mb-2"><i class="fa fa-phone me-2 text-success"></i><strong>Telepon:</strong> <?= esc($user['no_hp']) ?></p>
+                    <p class="mb-0"><i class="fa fa-map-marker-alt me-2 text-danger"></i><strong>Alamat:</strong> <?= esc($user['alamat']) ?></p>
+                </div>
+
+                <div class="text-start px-3">
+
+                    <button class="btn btn-primary mt-4 " data-bs-toggle="modal" data-bs-target="#editProfilModal">
+                        <i class="fa-solid fa-user-pen me-2"></i>Edit Profil
+                    </button>
+                </div>
             </div>
         </div>
 
-        <!-- Riwayat Booking -->
+
         <div class="col-md-8">
             <div class="history-card">
 
@@ -61,7 +77,7 @@
 
                                 </div>
                                 <div class="mb-1"><strong>Tanggal :</strong> <?= date('d M Y', strtotime($booking['tanggal_booking'])) ?></div>
-                                <div class="mb-1"><strong>Jam :</strong> <?= esc($booking['jam_mulai']) ?></div>
+                                <div class="mb-1"><strong>Jam :</strong> <?= esc($booking['jam_mulai']) ?> s/d <?= esc($booking['jam_selesai']) ?> </div>
                                 <div class="mb-1"><strong>Pembayaran :</strong> <?= esc($booking['jenis_pembayaran']) ?></div>
                                 <div class="mb-1"><strong>Total Pembayaran :</strong> <span class="text-success">Rp <?= number_format($booking['total_bayar'], 0, ',', '.') ?></span></div>
                                 <div class="mb-1"><strong>Dibayar :</strong> <span class="text-success">Rp <?= number_format($booking['bayar'], 0, ',', '.') ?></span></div>
@@ -156,7 +172,6 @@
                                             data-total="<?= esc($booking['bayar']) ?>">
                                             <i class="fa-solid fa-money-bill me-1"></i> Selesaikan Pembayaran
                                         </button>
-
                                     <?php endif; ?>
                                 </div>
 
@@ -182,9 +197,64 @@
 
             </div>
         </div>
-
     </div>
 </div>
+
+
+
+<?php
+$defaultImage = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSOH2aZnIHWjMQj2lQUOWIL2f4Hljgab0ecZQ&s";
+$imageSrc = !empty($user['image_profil']) && file_exists(FCPATH . 'uploads/foto_profil/' . $user['image_profil'])
+    ? base_url('uploads/foto_profil/' . $user['image_profil'])
+    : $defaultImage;
+?>
+<div class="modal fade" id="editProfilModal" tabindex="-1" aria-labelledby="editProfilModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form method="post" action="<?= site_url('user/profil/update') ?>" enctype="multipart/form-data">
+
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editProfilModalLabel">Edit Profil</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center mb-3">
+                        <img id="previewImage" src="<?= esc($imageSrc) ?>" alt="Preview Foto Profil"
+                            style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover;">
+                    </div>
+                    <div class="mb-3">
+                        <label for="foto" class="form-label">Foto Profil</label>
+                        <input type="file" class="form-control" id="image" name="image" accept="image/*" onchange="previewFoto(this)">
+
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="nama" class="form-label">Nama</label>
+                        <input type="text" class="form-control" id="nama" name="nama" value="<?= esc($user['nama']) ?>" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="email" name="email" value="<?= esc($user['email']) ?>" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="telepon" class="form-label">Telepon</label>
+                        <input type="text" class="form-control" id="no_hp" name="no_hp" value="<?= esc($user['no_hp'] ?? '') ?>">
+                    </div>
+                    <div class="mb-3">
+                        <label for="alamat" class="form-label">Alamat</label>
+                        <textarea class="form-control" id="alamat" name="alamat" rows="2"><?= esc($user['alamat'] ?? '') ?></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
 
 
 
@@ -230,6 +300,20 @@
         </div>
     </div>
 </div>
+
+<script>
+    function previewFoto(input) {
+        const file = input.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('previewImage').src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+</script>
+
 
 <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="<?= getenv('MIDTRANS_CLIENT_KEY') ?>"></script>
 <script>
