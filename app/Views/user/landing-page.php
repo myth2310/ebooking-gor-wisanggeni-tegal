@@ -21,8 +21,7 @@
 </section>
 </div>
 
-
-<!-- Kategori Section (Dummy) -->
+<!-- Kategori Section -->
 <section id="kategori" class="py-5">
   <div class="container">
     <div class="d-flex justify-content-between align-items-center mb-3">
@@ -51,13 +50,14 @@
   </div>
 </section>
 
+
+<!-- Vanue Section -->
 <section id="venue">
   <div class="container my-5">
     <div class="text-center mb-5">
       <h2 class="fw-bold">Our Best Venue in Gor Wisanggeni Tegal</h2>
       <p class="text-muted">So much of difference between a triumph and a flop is determined by choice of venue.</p>
     </div>
-
     <div class="row g-4">
       <?php if (!empty($lapangans)): ?>
         <?php foreach ($lapangans as $row): ?>
@@ -93,11 +93,10 @@
   </div>
 </section>
 
-
 <script>
   function scrollKategori(direction) {
     const container = document.getElementById('kategori-scroll');
-    const scrollAmount = 260; // adjust based on item width
+    const scrollAmount = 260;
     container.scrollLeft += direction * scrollAmount;
   }
 </script>

@@ -4,9 +4,22 @@
     font-style: normal;
 }
 
-body{
-    padding-top: 100px;
+html, body {
+  height: 100%;
+  margin: 0;
+  padding-top: 50px;
 }
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+main {
+  flex: 1;
+}
+
 
 .heighlight {
     position: absolute;
