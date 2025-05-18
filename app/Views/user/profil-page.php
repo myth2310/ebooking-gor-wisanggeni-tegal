@@ -76,6 +76,7 @@
                                     <?php endif; ?>
 
                                 </div>
+                                <div class="mb-1"><strong>Kode Booking :</strong> <?= esc($booking['kode_booking']) ?></div>
                                 <div class="mb-1"><strong>Tanggal :</strong> <?= date('d M Y', strtotime($booking['tanggal_booking'])) ?></div>
                                 <div class="mb-1"><strong>Jam :</strong> <?= esc($booking['jam_mulai']) ?> s/d <?= esc($booking['jam_selesai']) ?> </div>
                                 <div class="mb-1"><strong>Pembayaran :</strong> <?= esc($booking['jenis_pembayaran']) ?></div>
@@ -124,7 +125,8 @@
                                             data-tanggal="<?= date('d M Y', strtotime($booking['tanggal_booking'])) ?>"
                                             data-jam="<?= esc($booking['jam_mulai']) ?>"
                                             data-total="<?= number_format($booking['total_bayar'], 0, ',', '.') ?>"
-                                            data-kode="<?= esc($booking['kode_booking']) ?>">
+                                            data-kode="<?= esc($booking['kode_booking']) ?>"
+                                            data-download-url="<?= base_url('user/download-tiket/' . $booking['kode_booking']) ?>">
                                             <i class="fa-solid fa-file-invoice me-1"></i> Tiket Booking
                                         </button>
 
@@ -141,7 +143,8 @@
                                             data-tanggal="<?= date('d M Y', strtotime($booking['tanggal_booking'])) ?>"
                                             data-jam="<?= esc($booking['jam_mulai']) ?>"
                                             data-total="<?= number_format($booking['total_bayar'], 0, ',', '.') ?>"
-                                            data-kode="<?= esc($booking['kode_booking']) ?>">
+                                            data-kode="<?= esc($booking['kode_booking']) ?>"
+                                            data-download-url="<?= base_url('user/download-tiket/' . $booking['kode_booking']) ?>">
                                             <i class="fa-solid fa-file-invoice me-1"></i> Tiket Booking
                                         </button>
 
@@ -253,8 +256,6 @@ $imageSrc = !empty($user['image_profil']) && file_exists(FCPATH . 'uploads/foto_
         </form>
     </div>
 </div>
-
-
 
 
 
@@ -392,6 +393,7 @@ $imageSrc = !empty($user['image_profil']) && file_exists(FCPATH . 'uploads/foto_
                 const tanggal = this.getAttribute('data-tanggal');
                 const jam = this.getAttribute('data-jam');
                 const total = this.getAttribute('data-total');
+                const downloadUrl = this.dataset.downloadUrl;
 
                 document.getElementById('modalKode').textContent = kode;
                 document.getElementById('modalNama').textContent = nama;
@@ -400,8 +402,8 @@ $imageSrc = !empty($user['image_profil']) && file_exists(FCPATH . 'uploads/foto_
                 document.getElementById('modalTotal').textContent = 'Rp ' + total;
 
 
-                const downloadLink = document.getElementById('downloadTicket');
-                downloadLink.href = "<?= base_url('/user/download-tiket') ?>/" + kode;
+                document.getElementById('downloadTicket').href = downloadUrl;
+
             });
         });
     });

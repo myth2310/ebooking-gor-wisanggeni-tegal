@@ -142,26 +142,26 @@ class BookingController extends BaseController
     }
 
     public function download_tiket($kode)
-    {
-        $bookingModel = new BookingModel();
+{
+    $bookingModel = new BookingModel();
 
-        $data = $bookingModel
-            ->select('booking.*, lapangan.nama_lapangan, lapangan.jenis')
-            ->join('lapangan', 'lapangan.id = booking.id_lapangan')
-            ->first();
+    $data = $bookingModel
+        ->select('booking.*, lapangan.nama_lapangan, lapangan.jenis')
+        ->join('lapangan', 'lapangan.id = booking.id_lapangan')
+        ->where('booking.kode_booking', $kode)
+        ->first();
+    $html = view('user/tiket-page', ['booking' => $data]);
 
-        $html = view('user/tiket-page', ['booking' => $data]);
+    $pdf = new \Dompdf\Dompdf();
+    $pdf->loadHtml($html);
+    $pdf->setPaper('A4', 'portrait');
+    $pdf->render();
 
-        $pdf = new \Dompdf\Dompdf();
-        $pdf->loadHtml($html);
-        $pdf->setPaper('A4', 'portrait');
-        $pdf->render();
-
-        return $this->response
-            ->setHeader('Content-Type', 'application/pdf')
-            ->setHeader('Content-Disposition', 'attachment; filename="TiketBooking-' . $kode . '.pdf"')
-            ->setBody($pdf->output());
-    }
+    return $this->response
+        ->setHeader('Content-Type', 'application/pdf')
+        ->setHeader('Content-Disposition', 'attachment; filename="TiketBooking-' . $kode . '.pdf"')
+        ->setBody($pdf->output());
+}
 
     public function konfirmasi_kedatangan($id)
     {

@@ -13,7 +13,7 @@
             border: 2px dashed #333;
             padding: 20px;
             width: 100%;
-            max-width: 600px; /* Atur lebar maksimal sesuai kebutuhan */
+            max-width: 600px; 
             margin: auto;
         }
         .ticket-header {
