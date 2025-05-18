@@ -13,12 +13,12 @@
 
       <div class="mb-3">
         <label for="tanggal">Tanggal Booking:</label>
-        <input type="date" id="tanggal" name="tanggal" min="<?= date('Y-m-d') ?>" class="form-control">
+        <input type="date" id="tanggal" name="tanggal" min="<?= date('Y-m-d') ?>" class="form-control" required>
       </div>
 
       <div class="mb-3">
         <label for="lapangan">Pilih Lapangan:</label>
-        <select id="lapangan" name="lapangan" class="form-control">
+        <select id="lapangan" name="lapangan" class="form-control" disabled required>
           <option value="">-- Pilih Lapangan --</option>
           <?php foreach ($lapangans as $l): ?>
             <option value="<?= $l['id'] ?>" data-harga="<?= $l['harga_per_jam'] ?>">
@@ -30,13 +30,14 @@
 
       <div class="mb-3">
         <label for="jam">Pilih Jam:</label>
-        <select id="jam" name="jam" class="form-control">
+        <select id="jam" name="jam" class="form-control" disabled required>
           <option value="">-- Pilih Jam --</option>
           <?php for ($i = 7; $i <= 24; $i++): ?>
             <option value="<?= $i ?>"><?= sprintf('%02d.00', $i) ?></option>
           <?php endfor; ?>
         </select>
       </div>
+
 
       <div class="mb-3">
         <label for="durasi" class="form-label">Durasi Sewa (jam)</label>
@@ -90,6 +91,21 @@
     let hargaLapangan = 0;
     const today = new Date().toISOString().split('T')[0];
     tanggalInput.setAttribute('min', today);
+
+    tanggalInput.addEventListener('change', function() {
+      const isTanggalTerisi = tanggalInput.value !== '';
+      lapanganInput.disabled = !isTanggalTerisi;
+      jamSelect.disabled = !isTanggalTerisi;
+
+      if (!isTanggalTerisi) {
+        lapanganInput.value = '';
+        jamSelect.value = '';
+      } else {
+        cekJamTerbooking(); 
+      }
+    });
+
+
     function cekJamTerbooking() {
       const tanggal = tanggalInput.value;
       const lapangan = lapanganInput.value;

@@ -94,12 +94,12 @@
 
                         <div class="mb-3">
                             <label for="tanggal">Tanggal Booking:</label>
-                            <input type="date" id="tanggal" name="tanggal" min="<?= date('Y-m-d') ?>" class="form-control">
+                            <input type="date" id="tanggal" name="tanggal" min="<?= date('Y-m-d') ?>" class="form-control" required>
                         </div>
 
                         <div class="mb-3">
                             <label for="jam">Pilih Jam:</label>
-                            <select id="jam" name="jam" class="form-control">
+                            <select id="jam" name="jam" class="form-control" required>
                                 <option value="">-- Pilih Jam --</option>
                                 <?php for ($i = 7; $i <= 24; $i++): ?>
                                     <option value="<?= $i ?>"><?= sprintf('%02d.00', $i) ?></option>
@@ -161,6 +161,19 @@
         const infoDp = document.getElementById('infoDp');
 
         let hargaLapangan = parseInt(lapanganInput.getAttribute('data-harga')) || 0;
+
+
+        jamSelect.disabled = true;
+
+        tanggalInput.addEventListener('change', function() {
+            if (tanggalInput.value) {
+                jamSelect.disabled = false;
+                cekJamTerbooking();
+            } else {
+                jamSelect.disabled = true;
+            }
+        });
+
 
         function cekJamTerbooking() {
             const tanggal = tanggalInput.value;
