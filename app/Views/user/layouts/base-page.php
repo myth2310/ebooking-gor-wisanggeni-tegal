@@ -19,6 +19,7 @@
         rel="stylesheet">
     <link rel="stylesheet" href="<?= base_url('css/style.css') ?>">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="icon" href="<?= base_url('images/icon.png') ?>" type="image/x-icon">
 
 </head>
 

@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Tiket Booking</title>
+    <title>Tiket eBooking Gor Wisanggeni Tegal - <?= $booking['kode_booking'] ?></title>
     <style>
         body {
             font-family: Arial, sans-serif;

@@ -34,12 +34,26 @@ class AuthController extends BaseController
                 ]);
 
                 $aktivitasModel = new AktivitasModel();
+
+                $agent = $this->request->getUserAgent();
+                if ($agent->isBrowser()) {
+                    $device = $agent->getBrowser() . ' ' . $agent->getVersion();
+                } elseif ($agent->isRobot()) {
+                    $device = $agent->getRobot();
+                } elseif ($agent->isMobile()) {
+                    $device = $agent->getMobile();
+                } else {
+                    $device = 'Unknown Device';
+                }
+                
+                $ip = $this->request->getServer('HTTP_X_FORWARDED_FOR') ?? $this->request->getIPAddress();
+                
                 $aktivitasModel->insert([
                     'aktivitas'  => $user['nama'] . ' berhasil Masuk',
-                    'device'     => $this->request->getUserAgent()->getAgentString(),
-                    'ip_address' => $this->request->getIPAddress(),
-                    'waktu'      => date('Y-m-d H:i:s'),
+                    'device'     => $device,
+                    'ip_address' => $ip,
                 ]);
+                
 
                 if ($user['role'] === 'admin') {
                     return redirect()->to('/admin/dashboard');

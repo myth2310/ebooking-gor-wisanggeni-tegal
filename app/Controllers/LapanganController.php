@@ -56,10 +56,24 @@ class LapanganController extends BaseController
         }
 
         $aktivitasModel = new AktivitasModel();
+        $agent = $this->request->getUserAgent();
+        if ($agent->isBrowser()) {
+            $device = $agent->getBrowser() . ' ' . $agent->getVersion();
+        } elseif ($agent->isRobot()) {
+            $device = $agent->getRobot();
+        } elseif ($agent->isMobile()) {
+            $device = $agent->getMobile();
+        } else {
+            $device = 'Unknown Device';
+        }
+
+        $ip = $this->request->getServer('HTTP_X_FORWARDED_FOR') ?? $this->request->getIPAddress();
+
+
         $aktivitasModel->insert([
             'aktivitas'  => session()->get('nama') . ' menambahkan ' . $data['nama_lapangan'],
-            'device'     => $this->request->getUserAgent()->getAgentString(),
-            'ip_address' => $this->request->getIPAddress(),
+            'device'     => $device,
+            'ip_address' => $ip,
         ]);
 
         session()->setFlashdata([

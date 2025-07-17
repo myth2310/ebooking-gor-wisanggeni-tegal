@@ -14,13 +14,14 @@
                 <i class="fas fa-history me-1"></i> Riwayat Aktivitas User
             </div>
             <div>
-                <form method="get" action="">
-                    <input type="date" name="tanggal" value="<?= date('Y-m-d') ?>" class="form-control" onchange="this.form.submit()" />
+                <form method="get" action="<?= base_url('admin/aktivitas/search') ?>">
+                    <input type="date" name="tanggal" value="<?= $tanggal ?? date('Y-m-d') ?>" class="form-control" onchange="this.form.submit()" />
                 </form>
             </div>
         </div>
         <div class="card-body">
             <p class="text-success">Data untuk tanggal: <strong><?= date('d-m-Y', strtotime($tanggal ?? date('Y-m-d'))) ?></strong></p>
+
 
             <div class="table-responsive">
                 <table class="table" id="datatablesSimple">
@@ -38,7 +39,7 @@
                         <?php foreach ($logs as $log): ?>
                             <tr>
                                 <td><?= $no++ ?></td>
-                                <td><?= $log['user'] . ' ' . $log['aktivitas'] ?></td>
+                                <td><?= $log['aktivitas'] ?></td>
                                 <td><?= $log['device'] ?></td>
                                 <td><?= $log['ip_address'] ?></td>
                                 <td><?= date('d-m-Y H:i:s', strtotime($log['created_at'])) ?></td>

@@ -63,4 +63,5 @@ $routes->group('admin', ['filter' => 'auth'], function ($routes) {
     $routes->post('booking/store', 'BookingController::storeAdmin');
 
     $routes->get('aktivitas', 'AktivitasController::index');
+    $routes->get('aktivitas/search', 'AktivitasController::search');
 });

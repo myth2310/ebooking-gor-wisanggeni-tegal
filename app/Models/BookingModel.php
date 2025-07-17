@@ -22,6 +22,7 @@ class BookingModel extends Model
         'durasi', 
         'bayar', 
         'total_bayar', 
+        'snap_token', 
         'jenis_pembayaran', 
         'status_booking', 
         'status_bayar', 
@@ -35,7 +36,7 @@ class BookingModel extends Model
     protected array $castHandlers = [];
 
     // Dates
-    protected $useTimestamps = false;
+    protected $useTimestamps = true;
     protected $dateFormat    = 'datetime';
     protected $createdField  = 'created_at';
     protected $updatedField  = 'updated_at';

@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Controllers\BaseController;
+use App\Models\AktivitasModel;
 use App\Models\BookingModel;
 use App\Models\LapanganModel;
 use App\Models\UserModel;
@@ -132,6 +133,27 @@ class BookingController extends BaseController
             'created_at'        => date('Y-m-d H:i:s'),
         ]);
 
+        $aktivitasModel = new AktivitasModel();
+        $agent = $this->request->getUserAgent();
+        if ($agent->isBrowser()) {
+            $device = $agent->getBrowser() . ' ' . $agent->getVersion();
+        } elseif ($agent->isRobot()) {
+            $device = $agent->getRobot();
+        } elseif ($agent->isMobile()) {
+            $device = $agent->getMobile();
+        } else {
+            $device = 'Unknown Device';
+        }
+
+        $ip = $this->request->getServer('HTTP_X_FORWARDED_FOR') ?? $this->request->getIPAddress();
+
+
+        $aktivitasModel->insert([
+            'aktivitas'  => session()->get('nama') . ' membooking lapangan',
+            'device'     => $device,
+            'ip_address' => $ip,
+        ]);
+
         session()->setFlashdata([
             'swal_icon'  => 'success',
             'swal_title' => 'Berhasil!',
@@ -142,26 +164,26 @@ class BookingController extends BaseController
     }
 
     public function download_tiket($kode)
-{
-    $bookingModel = new BookingModel();
+    {
+        $bookingModel = new BookingModel();
 
-    $data = $bookingModel
-        ->select('booking.*, lapangan.nama_lapangan, lapangan.jenis')
-        ->join('lapangan', 'lapangan.id = booking.id_lapangan')
-        ->where('booking.kode_booking', $kode)
-        ->first();
-    $html = view('user/tiket-page', ['booking' => $data]);
+        $data = $bookingModel
+            ->select('booking.*, lapangan.nama_lapangan, lapangan.jenis')
+            ->join('lapangan', 'lapangan.id = booking.id_lapangan')
+            ->where('booking.kode_booking', $kode)
+            ->first();
+        $html = view('user/tiket-page', ['booking' => $data]);
 
-    $pdf = new \Dompdf\Dompdf();
-    $pdf->loadHtml($html);
-    $pdf->setPaper('A4', 'portrait');
-    $pdf->render();
+        $pdf = new \Dompdf\Dompdf();
+        $pdf->loadHtml($html);
+        $pdf->setPaper('A4', 'portrait');
+        $pdf->render();
 
-    return $this->response
-        ->setHeader('Content-Type', 'application/pdf')
-        ->setHeader('Content-Disposition', 'attachment; filename="TiketBooking-' . $kode . '.pdf"')
-        ->setBody($pdf->output());
-}
+        return $this->response
+            ->setHeader('Content-Type', 'application/pdf')
+            ->setHeader('Content-Disposition', 'attachment; filename="TiketBooking-' . $kode . '.pdf"')
+            ->setBody($pdf->output());
+    }
 
     public function konfirmasi_kedatangan($id)
     {

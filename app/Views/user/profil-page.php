@@ -316,7 +316,7 @@ $imageSrc = !empty($user['image_profil']) && file_exists(FCPATH . 'uploads/foto_
 </script>
 
 
-<script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="<?= getenv('MIDTRANS_CLIENT_KEY') ?>"></script>
+<script src="<?= getenv('MIDTRANS_URL_SANDBOX') ?>" data-client-key="<?= getenv('MIDTRANS_CLIENT_KEY') ?>"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         document.querySelectorAll('.pay-button').forEach(function(button) {
@@ -336,42 +336,66 @@ $imageSrc = !empty($user['image_profil']) && file_exists(FCPATH . 'uploads/foto_
                     })
                     .then(response => response.json())
                     .then(data => {
-                        snap.pay(data.snapToken, {
-                            onSuccess: function(result) {
-                                Swal.fire({
-                                    title: 'Pembayaran Berhasil!',
-                                    text: 'Terima kasih atas transaksi Anda. Tiket booking sudah tersedia.',
-                                    icon: 'success',
-                                    confirmButtonText: 'OK',
-                                    confirmButtonColor: '#28a745',
-                                }).then(() => {
-                                    window.location.href = "<?= base_url('user/profil') ?>";
-                                });
-                            },
-                            onPending: function() {
-                                Swal.fire({
-                                    title: 'Pembayaran Sedang Diproses',
-                                    text: 'Pembayaran Anda sedang diproses, harap tunggu sebentar.',
-                                    icon: 'info',
-                                    confirmButtonText: 'OK',
-                                    confirmButtonColor: '#ffc107',
-                                }).then(() => {
-                                    window.location.href = "<?= base_url('user/profil') ?>";
-                                });
-                            },
-                            onError: function() {
-                                Swal.fire({
-                                    title: 'Pembayaran Gagal!',
-                                    text: 'Pembayaran Anda gagal diproses. Silakan coba lagi.',
-                                    icon: 'error',
-                                    confirmButtonText: 'OK',
-                                    confirmButtonColor: '#dc3545',
-                                });
-                            }
-                        });
+                        if (data.snapToken) {
+                            snap.pay(data.snapToken, {
+                                onSuccess: function(result) {
+                                    Swal.fire({
+                                        title: 'Pembayaran Berhasil!',
+                                        text: 'Terima kasih atas transaksi Anda. Tiket booking sudah tersedia.',
+                                        icon: 'success',
+                                        confirmButtonText: 'OK',
+                                        confirmButtonColor: '#28a745',
+                                    }).then(() => {
+                                        window.location.href = "<?= base_url('user/profil') ?>";
+                                    });
+                                },
+                                onPending: function() {
+                                    Swal.fire({
+                                        title: 'Pembayaran Sedang Diproses',
+                                        text: 'Pembayaran Anda sedang diproses, harap tunggu sebentar.',
+                                        icon: 'info',
+                                        confirmButtonText: 'OK',
+                                        confirmButtonColor: '#ffc107',
+                                    }).then(() => {
+                                        window.location.href = "<?= base_url('user/profil') ?>";
+                                    });
+                                },
+                                onError: function() {
+                                    Swal.fire({
+                                        title: 'Pembayaran Gagal!',
+                                        text: 'Pembayaran Anda gagal diproses. Silakan coba lagi.',
+                                        icon: 'error',
+                                        confirmButtonText: 'OK',
+                                        confirmButtonColor: '#dc3545',
+                                    });
+                                },
+                                onClose: function() {
+                                    Swal.fire({
+                                        title: 'Pembayaran Dibatalkan',
+                                        text: 'Anda telah menutup jendela pembayaran. Klik tombol bayar untuk mencoba lagi.',
+                                        icon: 'warning',
+                                        confirmButtonText: 'OK',
+                                        confirmButtonColor: '#6c757d',
+                                    });
+                                }
+                            });
+                        } else {
+                            Swal.fire({
+                                title: 'Gagal Mendapatkan Token',
+                                text: data.error || 'Terjadi kesalahan saat memulai pembayaran.',
+                                icon: 'error',
+                                confirmButtonText: 'OK',
+                            });
+                        }
                     })
                     .catch((error) => {
                         console.error('Error:', error);
+                        Swal.fire({
+                            title: 'Kesalahan',
+                            text: 'Terjadi kesalahan saat menghubungi server.',
+                            icon: 'error',
+                            confirmButtonText: 'OK',
+                        });
                     });
             });
         });
@@ -379,10 +403,7 @@ $imageSrc = !empty($user['image_profil']) && file_exists(FCPATH . 'uploads/foto_
 </script>
 
 
-
-
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {

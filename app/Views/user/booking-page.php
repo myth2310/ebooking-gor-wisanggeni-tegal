@@ -32,7 +32,7 @@
         <label for="jam">Pilih Jam:</label>
         <select id="jam" name="jam" class="form-control" disabled required>
           <option value="">-- Pilih Jam --</option>
-          <?php for ($i = 7; $i <= 24; $i++): ?>
+          <?php for ($i = 6; $i <= 21; $i++): ?>
             <option value="<?= $i ?>"><?= sprintf('%02d.00', $i) ?></option>
           <?php endfor; ?>
         </select>
